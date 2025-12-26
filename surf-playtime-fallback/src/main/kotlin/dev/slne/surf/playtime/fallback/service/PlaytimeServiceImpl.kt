@@ -3,6 +3,7 @@ package dev.slne.surf.playtime.fallback.service
 import com.google.auto.service.AutoService
 import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.core.service.PlaytimeService
+import dev.slne.surf.playtime.core.service.afkService
 import dev.slne.surf.playtime.fallback.repository.playtimeRepository
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -19,8 +20,8 @@ class PlaytimeServiceImpl : PlaytimeService, Services.Fallback {
         playtimeRepository.loadSessions(playerUuid)
 
     override fun increaseAllSessions() {
-        for (session in activePlaytimeSessions) {
-            session.increasePlaytime()
+        activePlaytimeSessions.filterNot { afkService.isAfk(it.playerUuid) }.forEach {
+            it.increasePlaytime()
         }
     }
 }

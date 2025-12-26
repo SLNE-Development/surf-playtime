@@ -4,6 +4,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @ConfigSerializable
 data class PlaytimeConfig(
-    val serverName: String,
-    val serverCategory: String
+    val serverName: String = "default",
+    val serverCategory: String = "default"
 )
