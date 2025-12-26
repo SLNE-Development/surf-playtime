@@ -15,10 +15,10 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
 object PlayerAfkListener : Listener {
-    private val afkTime = 10.seconds.inWholeMilliseconds
+    private val afkTime = 3.minutes.inWholeMilliseconds
     private val lastMovedTime = mutableObject2LongMapOf<UUID>()
     private val currentSentState = mutableObject2BooleanMapOf<UUID>()
 
