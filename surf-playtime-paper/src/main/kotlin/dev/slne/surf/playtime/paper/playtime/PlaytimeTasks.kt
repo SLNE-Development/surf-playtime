@@ -30,7 +30,6 @@ class PlaytimeTasks {
     private fun flushAllTask() = Bukkit.getAsyncScheduler().runAtFixedRate(plugin, {
         plugin.launch {
             playtimeService.flushAll()
-            plugin.logger.info("Flushed all playtime sessions to the database. (${playtimeService.activePlaytimeSessions.size} active sessions)")
         }
     }, 0L, 5L, TimeUnit.MINUTES)
 }

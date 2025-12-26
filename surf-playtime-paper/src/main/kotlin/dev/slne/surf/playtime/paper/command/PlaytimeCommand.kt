@@ -129,15 +129,15 @@ private fun Long.formatSeconds(): String {
 
     return when {
         hours > 0 -> {
-            String.format("%d:%02d:%02d", hours, minutes, seconds)
+            String.format("%dh%02dm%02ds", hours, minutes, seconds)
         }
 
         minutes > 0 -> {
-            String.format("%02d:%02d", minutes, seconds)
+            String.format("%dm %02ds", minutes, seconds)
         }
 
         else -> {
-            String.format("%02d", seconds)
+            String.format("%ds", seconds)
         }
     }
 }

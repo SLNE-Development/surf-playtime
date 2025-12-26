@@ -16,7 +16,7 @@ object PlayerQuitListener : Listener {
                     ?: return@launch
 
             playtimeService.saveSession(session)
-            playtimeService.activePlaytimeSessions.remove(session)
+            playtimeService.activePlaytimeSessions.removeIf { it.playerUuid == event.player.uniqueId }
         }
     }
 }
