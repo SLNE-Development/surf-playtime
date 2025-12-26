@@ -73,9 +73,9 @@ object PlayerAfkListener : Listener {
             appendPrefix()
             info("Du bist nun ")
             if (isAfk) {
-                info("Afk.")
+                info("AFK.")
             } else {
-                info("nicht mehr Afk.")
+                info("nicht mehr AFK.")
             }
         }
 
