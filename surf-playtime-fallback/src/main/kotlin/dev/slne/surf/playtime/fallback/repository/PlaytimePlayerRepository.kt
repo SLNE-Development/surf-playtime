@@ -38,7 +38,7 @@ class PlaytimePlayerRepository {
 
     suspend fun savePlayer(playtimePlayer: PlaytimePlayer) =
         newSuspendedTransaction(Dispatchers.IO) {
-            PlaytimePlayerTable.upsert(PlaytimePlayerTable.uuid) { row ->
+            PlaytimePlayerTable.upsert { row ->
                 row[uuid] = playtimePlayer.uuid
                 row[name] = playtimePlayer.name
             }

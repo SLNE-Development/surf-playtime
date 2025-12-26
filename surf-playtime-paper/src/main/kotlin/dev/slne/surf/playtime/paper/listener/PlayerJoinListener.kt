@@ -1,8 +1,12 @@
 package dev.slne.surf.playtime.paper.listener
 
+import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.playtime.api.player.PlaytimePlayer
 import dev.slne.surf.playtime.api.session.PlaytimeSession
+import dev.slne.surf.playtime.core.service.playtimePlayerService
 import dev.slne.surf.playtime.core.service.playtimeService
 import dev.slne.surf.playtime.paper.playtimeConfig
+import dev.slne.surf.playtime.paper.plugin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -20,5 +24,14 @@ object PlayerJoinListener : Listener {
                 1L
             )
         )
+
+        plugin.launch {
+            playtimePlayerService.savePlayer(
+                PlaytimePlayer(
+                    event.player.name,
+                    event.player.uniqueId
+                )
+            )
+        }
     }
 }

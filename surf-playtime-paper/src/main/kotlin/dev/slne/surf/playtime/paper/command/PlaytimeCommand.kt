@@ -18,7 +18,7 @@ fun playtimeCommand() = commandTree("playtime") {
 
     playerExecutor { player, _ ->
         plugin.launch {
-            val playtime = playtimeService.loadSessions(player.uniqueId)
+            val playtime = playtimeService.getAndLoadSessions(player.uniqueId)
             val summedPlaytime = playtime.sumPlaytime()
 
             player.sendText {
@@ -28,7 +28,7 @@ fun playtimeCommand() = commandTree("playtime") {
                 appendNewPrefixedLine {
                     variableKey("Gesamt")
                     spacer(": ")
-                    variableValue(playtime.sumOf { it.durationSeconds })
+                    variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                 }
                 appendNewPrefixedLine()
                 for ((group, groupServer) in summedPlaytime) {
@@ -36,14 +36,14 @@ fun playtimeCommand() = commandTree("playtime") {
                         spacer("- ")
                         variableKey(group)
                         spacer(": ")
-                        variableValue(playtime.sumByCategory(group).toString())
+                        variableValue(playtime.sumByCategory(group).formatSeconds())
 
                         for ((serverName, playtime) in groupServer) {
                             appendNewPrefixedLine {
                                 text("    ")
                                 variableKey(serverName)
                                 spacer(": ")
-                                variableValue(playtime.toString())
+                                variableValue(playtime.formatSeconds())
                             }
                         }
                         appendNewPrefixedLine()
@@ -69,7 +69,7 @@ fun playtimeCommand() = commandTree("playtime") {
                     return@launch
                 }
 
-                val playtime = playtimeService.loadSessions(targetPlayer.uuid)
+                val playtime = playtimeService.getAndLoadSessions(targetPlayer.uuid)
                 val summedPlaytime = playtime.sumPlaytime()
 
                 sender.sendText {
@@ -80,7 +80,7 @@ fun playtimeCommand() = commandTree("playtime") {
                     appendNewPrefixedLine {
                         variableKey("Gesamt")
                         spacer(": ")
-                        variableValue(playtime.sumOf { it.durationSeconds })
+                        variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                     }
                     appendNewPrefixedLine()
                     for ((group, groupServer) in summedPlaytime) {
@@ -88,14 +88,14 @@ fun playtimeCommand() = commandTree("playtime") {
                             spacer("- ")
                             variableKey(group)
                             spacer(": ")
-                            variableValue(playtime.sumByCategory(group).toString())
+                            variableValue(playtime.sumByCategory(group).formatSeconds())
 
                             for ((serverName, playtime) in groupServer) {
                                 appendNewPrefixedLine {
                                     text("    ")
                                     variableKey(serverName)
                                     spacer(": ")
-                                    variableValue(playtime.toString())
+                                    variableValue(playtime.formatSeconds())
                                 }
                             }
                             appendNewPrefixedLine()
@@ -121,3 +121,23 @@ private fun ObjectSet<PlaytimeSession>.sumByCategory(category: String) =
     this
         .filter { it.category == category }
         .sumOf { it.durationSeconds }
+
+private fun Long.formatSeconds(): String {
+    val hours = this / 3600
+    val minutes = (this % 3600) / 60
+    val seconds = this % 60
+
+    return when {
+        hours > 0 -> {
+            String.format("%d:%02d:%02d", hours, minutes, seconds)
+        }
+
+        minutes > 0 -> {
+            String.format("%02d:%02d", minutes, seconds)
+        }
+
+        else -> {
+            String.format("%02d", seconds)
+        }
+    }
+}

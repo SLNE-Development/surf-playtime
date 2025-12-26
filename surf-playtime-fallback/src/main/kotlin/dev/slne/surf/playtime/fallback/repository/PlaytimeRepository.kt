@@ -21,7 +21,7 @@ class PlaytimeRepository {
                 .firstOrNull()
                 ?.get(PlaytimePlayerTable.id)?.value
                 ?: return@newSuspendedTransaction
-        PlaytimeSessionsTable.upsert(PlaytimeSessionsTable.sessionUuid) {
+        PlaytimeSessionsTable.upsert {
             it[sessionUuid] = session.sessionId
             it[this.playerId] = playerId
             it[serverName] = session.server
