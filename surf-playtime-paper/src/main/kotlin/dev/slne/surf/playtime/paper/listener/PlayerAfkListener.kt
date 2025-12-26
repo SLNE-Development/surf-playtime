@@ -1,6 +1,10 @@
 package dev.slne.surf.playtime.paper.listener
 
+import dev.slne.surf.playtime.api.redis.event.AfkStateChangeRedisEvent
+import dev.slne.surf.playtime.core.service.afkService
 import dev.slne.surf.playtime.paper.plugin
+import dev.slne.surf.playtime.paper.redisApi
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.mutableObject2BooleanMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObject2LongMapOf
 import org.bukkit.Bukkit
@@ -9,7 +13,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
@@ -45,7 +49,8 @@ object PlayerAfkListener : Listener {
     }
 
     fun afkCheckTask() {
-        Bukkit.getAsyncScheduler().runAtFixedRate(plugin,{
+        plugin.logger.info("Starting Afk check task...")
+        Bukkit.getAsyncScheduler().runAtFixedRate(plugin, {
             val currentTime = System.currentTimeMillis()
 
             lastMovedTime.object2LongEntrySet().fastForEach { entry ->
@@ -62,6 +67,23 @@ object PlayerAfkListener : Listener {
     }
 
     private fun broadcastChange(uuid: UUID, isAfk: Boolean) {
+        afkService.changeState(uuid, isAfk)
 
+        Bukkit.getPlayer(uuid)?.sendText {
+            appendPrefix()
+            info("Du bist nun ")
+            if (isAfk) {
+                info("Afk.")
+            } else {
+                info("nicht mehr Afk.")
+            }
+        }
+
+        redisApi.publishEvent(
+            AfkStateChangeRedisEvent(
+                uuid = uuid,
+                isAfk = isAfk
+            )
+        )
     }
 }

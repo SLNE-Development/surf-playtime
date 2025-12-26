@@ -9,3 +9,8 @@ surfPaperPluginApi {
 
     authors.add("red")
 }
+
+dependencies {
+    api(project(":surf-playtime-core"))
+    runtimeOnly(project(":surf-playtime-fallback"))
+}
