@@ -4,7 +4,6 @@ import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.playtime.core.databaseBridge
 import dev.slne.surf.playtime.core.service.playtimeService
 import dev.slne.surf.playtime.paper.command.playtimeCommand
-import dev.slne.surf.playtime.paper.config.PlaytimeConfigHolder
 import dev.slne.surf.playtime.paper.listener.PlayerAfkListener
 import dev.slne.surf.playtime.paper.listener.PlayerJoinListener
 import dev.slne.surf.playtime.paper.listener.PlayerQuitListener
@@ -24,7 +23,10 @@ class PaperMain : SuspendingJavaPlugin() {
         playtimeTasks.startAll()
 
         redisLoader.connect()
-        databaseBridge.initialize(dataPath)
+
+        runBlocking {
+            databaseBridge.initialize(dataPath)
+        }
 
         playtimeCommand()
     }
@@ -40,6 +42,3 @@ class PaperMain : SuspendingJavaPlugin() {
         databaseBridge.disconnect()
     }
 }
-
-val playtimeConfigHolder = PlaytimeConfigHolder()
-val playtimeConfig get() = playtimeConfigHolder.config

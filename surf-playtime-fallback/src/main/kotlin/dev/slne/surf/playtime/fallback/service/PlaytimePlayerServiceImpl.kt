@@ -21,6 +21,7 @@ class PlaytimePlayerServiceImpl : PlaytimePlayerService, Services.Fallback {
     override suspend fun getOrLoadPlayerByName(name: String) =
         getPlayer(name) ?: loadPlayerByName(name)
 
-    override suspend fun savePlayer(playtimePlayer: PlaytimePlayer) =
+    override suspend fun savePlayer(playtimePlayer: PlaytimePlayer) {
         playtimePlayerRepository.savePlayer(playtimePlayer)
+    }
 }

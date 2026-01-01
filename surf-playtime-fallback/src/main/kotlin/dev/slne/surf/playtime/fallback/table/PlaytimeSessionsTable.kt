@@ -1,6 +1,6 @@
 package dev.slne.surf.playtime.fallback.table
 
-import org.jetbrains.exposed.dao.id.LongIdTable
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 
 object PlaytimeSessionsTable : LongIdTable("playtime_sessions") {
     val sessionUuid = uuid("session_uuid").uniqueIndex()

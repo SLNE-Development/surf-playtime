@@ -1,11 +1,11 @@
 package dev.slne.surf.playtime.paper.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.playtime.api.player.PlaytimePlayer
 import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.core.service.playtimePlayerService
 import dev.slne.surf.playtime.core.service.playtimeService
-import dev.slne.surf.playtime.paper.playtimeConfig
 import dev.slne.surf.playtime.paper.plugin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -19,8 +19,8 @@ object PlayerJoinListener : Listener {
             PlaytimeSession(
                 event.player.uniqueId,
                 UUID.randomUUID(),
-                playtimeConfig.serverName,
-                playtimeConfig.serverCategory,
+                surfCoreApi.getCurrentServerName(),
+                surfCoreApi.getCurrentServerCategory(),
                 1L
             )
         )
