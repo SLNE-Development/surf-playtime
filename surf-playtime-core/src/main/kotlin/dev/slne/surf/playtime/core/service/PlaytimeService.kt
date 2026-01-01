@@ -22,6 +22,8 @@ interface PlaytimeService {
         if (activeSession != null) {
             result.add(activeSession)
             result.addAll(loadedSessions.filterNot { it.sessionId == activeSession.sessionId })
+        } else {
+            result.addAll(loadedSessions)
         }
 
         return result

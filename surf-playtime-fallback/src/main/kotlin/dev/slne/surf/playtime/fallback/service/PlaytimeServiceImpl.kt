@@ -13,8 +13,9 @@ import java.util.*
 @AutoService(PlaytimeService::class)
 class PlaytimeServiceImpl : PlaytimeService, Services.Fallback {
     override val activePlaytimeSessions = mutableObjectSetOf<PlaytimeSession>()
-    override suspend fun saveSession(session: PlaytimeSession) =
+    override suspend fun saveSession(session: PlaytimeSession) {
         playtimeRepository.saveSession(session)
+    }
 
     override suspend fun loadSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> =
         playtimeRepository.loadSessions(playerUuid)

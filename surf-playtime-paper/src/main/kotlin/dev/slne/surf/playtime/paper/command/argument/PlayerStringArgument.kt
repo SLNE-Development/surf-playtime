@@ -5,7 +5,7 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import org.bukkit.Bukkit
+import dev.slne.surf.core.api.common.surfCoreApi
 
 class PlayerStringArgument(nodeName: String) :
     CustomArgument<String, String>(StringArgument(nodeName), { info ->
@@ -13,7 +13,7 @@ class PlayerStringArgument(nodeName: String) :
     }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            Bukkit.getOnlinePlayers().map { it.name }
+            surfCoreApi.getOnlinePlayers().mapNotNull { it.lastKnownName }
         })
     }
 }

@@ -6,6 +6,6 @@ import java.nio.file.Path
 val databaseBridge = requiredService<DatabaseBridge>()
 
 interface DatabaseBridge {
-    fun initialize(path: Path)
+    suspend fun initialize(path: Path)
     fun disconnect()
 }
