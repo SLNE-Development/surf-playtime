@@ -52,7 +52,7 @@ fun playtimeCommand() = commandTree("playtime") {
             }
         }
     }
-
+ 
     playerStringArgument("player") {
         withPermission("surf.playtime.command.others")
 
