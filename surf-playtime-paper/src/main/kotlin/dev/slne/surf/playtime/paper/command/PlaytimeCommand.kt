@@ -22,6 +22,7 @@ fun playtimeCommand() = commandTree("playtime") {
             val summedPlaytime = playtime.sumPlaytime()
 
             player.sendText {
+                appendNewline()
                 appendPrefix()
                 info("Deine Spielzeit")
                 appendNewPrefixedLine()
@@ -52,7 +53,7 @@ fun playtimeCommand() = commandTree("playtime") {
             }
         }
     }
- 
+
     playerStringArgument("player") {
         withPermission("surf.playtime.command.others")
 
@@ -73,6 +74,7 @@ fun playtimeCommand() = commandTree("playtime") {
                 val summedPlaytime = playtime.sumPlaytime()
 
                 sender.sendText {
+                    appendNewline()
                     appendPrefix()
                     info("Spielzeit von ")
                     variableValue(targetPlayer.name)
