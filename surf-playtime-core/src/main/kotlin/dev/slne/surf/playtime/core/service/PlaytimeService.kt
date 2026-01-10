@@ -29,6 +29,16 @@ interface PlaytimeService {
         return result
     }
 
+    suspend fun loadSessionsByServer(
+        playerUuid: UUID,
+        serverName: String
+    ): ObjectSet<PlaytimeSession>
+
+    suspend fun loadSessionsByCategory(
+        playerUuid: UUID,
+        category: String
+    ): ObjectSet<PlaytimeSession>
+
     fun increaseAllSessions()
 
     suspend fun flushAll() {

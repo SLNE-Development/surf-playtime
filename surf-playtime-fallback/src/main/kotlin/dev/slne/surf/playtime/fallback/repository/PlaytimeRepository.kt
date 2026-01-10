@@ -1,5 +1,6 @@
 package dev.slne.surf.playtime.fallback.repository
 
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.and
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
@@ -39,6 +40,58 @@ class PlaytimeRepository {
                 ?.get(PlaytimePlayerTable.id)?.value
                 ?: return@suspendTransaction mutableObjectSetOf<PlaytimeSession>()
         PlaytimeSessionsTable.selectAll().where(PlaytimeSessionsTable.playerId eq playerId)
+            .map { row ->
+                PlaytimeSession(
+                    sessionId = row[PlaytimeSessionsTable.sessionUuid],
+                    playerUuid = playerUuid,
+                    server = row[PlaytimeSessionsTable.serverName],
+                    category = row[PlaytimeSessionsTable.category],
+                    durationSeconds = row[PlaytimeSessionsTable.durationSeconds]
+                )
+            }.let { sessions ->
+                val set = mutableObjectSetOf<PlaytimeSession>()
+                set.addAll(sessions.toSet())
+                set
+            }
+    }
+
+    suspend fun loadSessionsByServer(
+        playerUuid: UUID,
+        serverName: String
+    ): ObjectSet<PlaytimeSession> = suspendTransaction {
+        val playerId =
+            PlaytimePlayerTable.selectAll().where(PlaytimePlayerTable.uuid eq playerUuid)
+                .firstOrNull()
+                ?.get(PlaytimePlayerTable.id)?.value
+                ?: return@suspendTransaction mutableObjectSetOf<PlaytimeSession>()
+        PlaytimeSessionsTable.selectAll()
+            .where { (PlaytimeSessionsTable.playerId eq playerId) and (PlaytimeSessionsTable.serverName eq serverName) }
+            .map { row ->
+                PlaytimeSession(
+                    sessionId = row[PlaytimeSessionsTable.sessionUuid],
+                    playerUuid = playerUuid,
+                    server = row[PlaytimeSessionsTable.serverName],
+                    category = row[PlaytimeSessionsTable.category],
+                    durationSeconds = row[PlaytimeSessionsTable.durationSeconds]
+                )
+            }.let { sessions ->
+                val set = mutableObjectSetOf<PlaytimeSession>()
+                set.addAll(sessions.toSet())
+                set
+            }
+    }
+
+    suspend fun loadSessionsByCategory(
+        playerUuid: UUID,
+        category: String
+    ): ObjectSet<PlaytimeSession> = suspendTransaction {
+        val playerId =
+            PlaytimePlayerTable.selectAll().where(PlaytimePlayerTable.uuid eq playerUuid)
+                .firstOrNull()
+                ?.get(PlaytimePlayerTable.id)?.value
+                ?: return@suspendTransaction mutableObjectSetOf<PlaytimeSession>()
+        PlaytimeSessionsTable.selectAll()
+            .where { (PlaytimeSessionsTable.playerId eq playerId) and (PlaytimeSessionsTable.category eq category) }
             .map { row ->
                 PlaytimeSession(
                     sessionId = row[PlaytimeSessionsTable.sessionUuid],

@@ -20,6 +20,16 @@ class PlaytimeServiceImpl : PlaytimeService, Services.Fallback {
     override suspend fun loadSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> =
         playtimeRepository.loadSessions(playerUuid)
 
+    override suspend fun loadSessionsByServer(
+        playerUuid: UUID,
+        serverName: String
+    ): ObjectSet<PlaytimeSession> = playtimeRepository.loadSessionsByServer(playerUuid, serverName)
+
+    override suspend fun loadSessionsByCategory(
+        playerUuid: UUID,
+        category: String
+    ): ObjectSet<PlaytimeSession> = playtimeRepository.loadSessionsByCategory(playerUuid, category)
+
     override fun increaseAllSessions() {
         activePlaytimeSessions.filterNot { afkService.isAfk(it.playerUuid) }.forEach {
             it.increasePlaytime()
