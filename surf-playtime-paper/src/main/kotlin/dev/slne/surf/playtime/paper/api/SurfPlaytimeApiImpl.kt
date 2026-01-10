@@ -7,6 +7,7 @@ import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.core.service.afkService
 import dev.slne.surf.playtime.core.service.playtimePlayerService
 import dev.slne.surf.playtime.core.service.playtimeService
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
 import java.util.*
 
@@ -53,6 +54,8 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
     override suspend fun getTotalPlaytime(playerUuid: UUID) =
         playtimeService.getAndLoadSessions(playerUuid).sumOf { it.durationSeconds }
 
+    override suspend fun getAllPlaytimeSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> =
+        playtimeService.getAndLoadSessions(playerUuid)
 
     override fun getPlaytimePlayer(name: String): PlaytimePlayer? =
         playtimePlayerService.getPlayer(name)
