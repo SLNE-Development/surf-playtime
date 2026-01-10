@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'version/*'
+      - 'master'
   workflow_dispatch:
 
 env:
