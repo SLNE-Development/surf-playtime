@@ -16,5 +16,4 @@ data class PlaytimeSession(
     var endTime: @Contextual LocalDateTime
 ) {
     val durationSeconds get() = Duration.between(startTime, endTime).seconds
-    val durationSecondsAtNow get() = Duration.between(startTime, LocalDateTime.now()).seconds
 }
