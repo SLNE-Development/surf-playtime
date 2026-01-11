@@ -5,7 +5,6 @@ import dev.slne.surf.database.DatabaseApi
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.SchemaUtils
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.playtime.core.DatabaseBridge
-import dev.slne.surf.playtime.fallback.table.PlaytimePlayerTable
 import dev.slne.surf.playtime.fallback.table.PlaytimeSessionsTable
 import net.kyori.adventure.util.Services
 import java.nio.file.Path
@@ -17,7 +16,7 @@ class DatabaseBridgeImpl : DatabaseBridge, Services.Fallback {
         databaseApi = DatabaseApi.create(path)
 
         suspendTransaction {
-            SchemaUtils.create(PlaytimePlayerTable, PlaytimeSessionsTable)
+            SchemaUtils.create(PlaytimeSessionsTable)
         }
     }
 

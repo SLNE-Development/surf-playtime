@@ -24,7 +24,7 @@ class PlaytimeTasks {
     }
 
     private fun playTimeTask() = Bukkit.getAsyncScheduler().runAtFixedRate(plugin, {
-        playtimeService.increaseAllSessions()
+        playtimeService.updateAllActiveSessions()
     }, 0L, 1L, TimeUnit.SECONDS)
 
     private fun flushAllTask() = Bukkit.getAsyncScheduler().runAtFixedRate(plugin, {

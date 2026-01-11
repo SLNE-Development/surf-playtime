@@ -1,6 +1,5 @@
 package dev.slne.surf.playtime.api
 
-import dev.slne.surf.playtime.api.player.PlaytimePlayer
 import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -17,7 +16,4 @@ interface SurfPlaytimeApi {
     suspend fun getTotalPlaytime(playerUuid: UUID): Long?
 
     suspend fun getAllPlaytimeSessions(playerUuid: UUID): ObjectSet<PlaytimeSession>
-
-    fun getPlaytimePlayer(name: String): PlaytimePlayer?
-    fun getPlaytimePlayer(uuid: UUID): PlaytimePlayer?
 }

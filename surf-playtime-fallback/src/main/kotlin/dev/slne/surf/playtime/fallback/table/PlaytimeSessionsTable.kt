@@ -1,11 +1,13 @@
 package dev.slne.surf.playtime.fallback.table
 
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.javatime.datetime
 
 object PlaytimeSessionsTable : LongIdTable("playtime_sessions") {
     val sessionUuid = uuid("session_uuid").uniqueIndex()
-    val playerId = long("playtime_player_id").references(PlaytimePlayerTable.id)
+    val playerUuid = uuid("playtime_player_id")
     val serverName = varchar("server_name", 255)
-    val category = varchar("category", 255)
-    val durationSeconds = long("duration_seconds").default(0)
+    val serverCategory = varchar("server_category", 255)
+    val startTime = datetime("start_time")
+    val endTime = datetime("end_time")
 }
