@@ -2,10 +2,8 @@ package dev.slne.surf.playtime.paper.api
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.playtime.api.SurfPlaytimeApi
-import dev.slne.surf.playtime.api.player.PlaytimePlayer
 import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.core.service.afkService
-import dev.slne.surf.playtime.core.service.playtimePlayerService
 import dev.slne.surf.playtime.core.service.playtimeService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
@@ -56,10 +54,4 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
 
     override suspend fun getAllPlaytimeSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> =
         playtimeService.getAndLoadSessions(playerUuid)
-
-    override fun getPlaytimePlayer(name: String): PlaytimePlayer? =
-        playtimePlayerService.getPlayer(name)
-
-    override fun getPlaytimePlayer(uuid: UUID): PlaytimePlayer? =
-        playtimePlayerService.getPlayer(uuid)
 }

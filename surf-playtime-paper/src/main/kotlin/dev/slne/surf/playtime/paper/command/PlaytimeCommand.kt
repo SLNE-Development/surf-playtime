@@ -4,13 +4,14 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.kotlindsl.commandTree
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.slne.surf.core.api.common.player.SurfPlayer
+import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.playtime.api.session.PlaytimeSession
-import dev.slne.surf.playtime.core.service.playtimePlayerService
 import dev.slne.surf.playtime.core.service.playtimeService
-import dev.slne.surf.playtime.paper.command.argument.playerStringArgument
 import dev.slne.surf.playtime.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import kotlinx.coroutines.Deferred
 
 fun playtimeCommand() = commandTree("playtime") {
     withAliases("pt")
@@ -54,14 +55,14 @@ fun playtimeCommand() = commandTree("playtime") {
         }
     }
 
-    playerStringArgument("player") {
+    surfOfflinePlayerArgument("player") {
         withPermission("surf.playtime.command.others")
 
         playerExecutor { sender, args ->
-            val player: String by args
+            val player: Deferred<SurfPlayer?> by args
 
             plugin.launch {
-                val targetPlayer = playtimePlayerService.getOrLoadPlayerByName(player)
+                val targetPlayer = player.await()
                 if (targetPlayer == null) {
                     sender.sendText {
                         appendPrefix()
@@ -77,7 +78,7 @@ fun playtimeCommand() = commandTree("playtime") {
                     appendNewline()
                     appendPrefix()
                     info("Spielzeit von ")
-                    variableValue(targetPlayer.name)
+                    variableValue(targetPlayer.lastKnownName ?: "Unbekannt")
                     appendNewPrefixedLine()
                     appendNewPrefixedLine {
                         variableKey("Gesamt")
