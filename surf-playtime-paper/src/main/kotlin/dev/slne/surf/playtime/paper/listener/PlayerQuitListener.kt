@@ -6,6 +6,7 @@ import dev.slne.surf.playtime.paper.plugin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
+import java.time.LocalDateTime
 
 object PlayerQuitListener : Listener {
     @EventHandler
@@ -15,7 +16,9 @@ object PlayerQuitListener : Listener {
                 playtimeService.activePlaytimeSessions.find { it.playerUuid == event.player.uniqueId }
                     ?: return@launch
 
-            playtimeService.saveSession(session)
+            playtimeService.saveSession(session.apply {
+                endTime = LocalDateTime.now()
+            })
             playtimeService.activePlaytimeSessions.removeIf { it.playerUuid == event.player.uniqueId }
         }
     }

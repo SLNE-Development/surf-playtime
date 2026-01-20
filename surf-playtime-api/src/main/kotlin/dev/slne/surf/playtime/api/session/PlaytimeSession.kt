@@ -1,18 +1,16 @@
 package dev.slne.surf.playtime.api.session
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.*
 
-@Serializable
 data class PlaytimeSession(
-    val playerUuid: @Contextual UUID,
-    val sessionId: @Contextual UUID,
+    val playerUuid: UUID,
+    val sessionId: UUID,
     val server: String,
     val category: String,
-    var durationSeconds: Long,
+    val startTime: LocalDateTime,
+    var endTime: LocalDateTime
 ) {
-    fun increasePlaytime(seconds: Long = 1L) {
-        durationSeconds += seconds
-    }
+    val durationSeconds get() = Duration.between(startTime, endTime).seconds
 }
