@@ -24,15 +24,15 @@ fun playtimeCommand() = commandTree("playtime") {
 
             player.sendText {
                 appendNewline()
-                appendPrefix()
+                appendInfoPrefix()
                 info("Deine Spielzeit")
-                appendNewPrefixedLine()
+                appendNewline().appendInfoPrefix()
                 appendNewPrefixedLine {
                     variableKey("Gesamt")
                     spacer(": ")
                     variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                 }
-                appendNewPrefixedLine()
+                appendNewline().appendInfoPrefix()
                 for ((group, groupServer) in summedPlaytime) {
                     appendNewPrefixedLine {
                         spacer("- ")
@@ -48,7 +48,7 @@ fun playtimeCommand() = commandTree("playtime") {
                                 variableValue(playtime.formatSeconds())
                             }
                         }
-                        appendNewPrefixedLine()
+                        appendNewline().appendInfoPrefix()
                     }
                 }
             }
@@ -65,7 +65,7 @@ fun playtimeCommand() = commandTree("playtime") {
                 val targetPlayer = player.await()
                 if (targetPlayer == null) {
                     sender.sendText {
-                        appendPrefix()
+                        appendErrorPrefix()
                         error("Spieler '$player' wurde nicht gefunden.")
                     }
                     return@launch
@@ -76,16 +76,16 @@ fun playtimeCommand() = commandTree("playtime") {
 
                 sender.sendText {
                     appendNewline()
-                    appendPrefix()
+                    appendInfoPrefix()
                     info("Spielzeit von ")
                     variableValue(targetPlayer.lastKnownName ?: "Unbekannt")
-                    appendNewPrefixedLine()
+                    appendNewline().appendInfoPrefix()
                     appendNewPrefixedLine {
                         variableKey("Gesamt")
                         spacer(": ")
                         variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                     }
-                    appendNewPrefixedLine()
+                    appendNewline().appendInfoPrefix()
                     for ((group, groupServer) in summedPlaytime) {
                         appendNewPrefixedLine {
                             spacer("- ")
@@ -101,7 +101,7 @@ fun playtimeCommand() = commandTree("playtime") {
                                     variableValue(playtime.formatSeconds())
                                 }
                             }
-                            appendNewPrefixedLine()
+                            appendNewline().appendInfoPrefix()
                         }
                     }
                 }

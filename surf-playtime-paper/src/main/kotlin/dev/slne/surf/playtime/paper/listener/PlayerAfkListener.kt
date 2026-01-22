@@ -70,7 +70,7 @@ object PlayerAfkListener : Listener {
         afkService.changeState(uuid, isAfk)
 
         Bukkit.getPlayer(uuid)?.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Du bist nun ")
             if (isAfk) {
                 info("AFK.")
