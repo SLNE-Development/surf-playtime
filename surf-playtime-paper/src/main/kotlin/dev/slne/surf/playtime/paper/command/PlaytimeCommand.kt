@@ -27,21 +27,24 @@ fun playtimeCommand() = commandTree("playtime") {
                 appendInfoPrefix()
                 info("Deine Spielzeit")
                 appendNewline().appendInfoPrefix()
-                appendNewPrefixedLine {
+                append {
+                    appendNewline().appendInfoPrefix()
                     variableKey("Gesamt")
                     spacer(": ")
                     variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                 }
                 appendNewline().appendInfoPrefix()
                 for ((group, groupServer) in summedPlaytime) {
-                    appendNewPrefixedLine {
+                    append {
+                        appendNewline().appendInfoPrefix()
                         spacer("- ")
                         variableKey(group)
                         spacer(": ")
                         variableValue(playtime.sumByCategory(group).formatSeconds())
 
                         for ((serverName, playtime) in groupServer) {
-                            appendNewPrefixedLine {
+                            append {
+                                appendNewline().appendInfoPrefix()
                                 text("    ")
                                 variableKey(serverName)
                                 spacer(": ")
@@ -80,21 +83,24 @@ fun playtimeCommand() = commandTree("playtime") {
                     info("Spielzeit von ")
                     variableValue(targetPlayer.lastKnownName ?: "Unbekannt")
                     appendNewline().appendInfoPrefix()
-                    appendNewPrefixedLine {
+                    append {
+                        appendNewline().appendInfoPrefix()
                         variableKey("Gesamt")
                         spacer(": ")
                         variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                     }
                     appendNewline().appendInfoPrefix()
                     for ((group, groupServer) in summedPlaytime) {
-                        appendNewPrefixedLine {
+                        append {
+                            appendNewline().appendInfoPrefix()
                             spacer("- ")
                             variableKey(group)
                             spacer(": ")
                             variableValue(playtime.sumByCategory(group).formatSeconds())
 
                             for ((serverName, playtime) in groupServer) {
-                                appendNewPrefixedLine {
+                                append {
+                                    appendNewline().appendInfoPrefix()
                                     text("    ")
                                     variableKey(serverName)
                                     spacer(": ")
