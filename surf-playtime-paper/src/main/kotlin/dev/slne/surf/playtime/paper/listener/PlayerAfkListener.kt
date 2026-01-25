@@ -28,10 +28,6 @@ object PlayerAfkListener : Listener {
             return
         }
 
-        if (!event.hasChangedPosition()) {
-            return
-        }
-
         lastMovedTime[event.player.uniqueId] = System.currentTimeMillis()
     }
 
