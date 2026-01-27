@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 object PlayerQuitListener : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
+        plugin.afkPlayers.remove(event.player.uniqueId)
         plugin.launch {
             val session =
                 playtimeService.activePlaytimeSessions.find { it.playerUuid == event.player.uniqueId }
