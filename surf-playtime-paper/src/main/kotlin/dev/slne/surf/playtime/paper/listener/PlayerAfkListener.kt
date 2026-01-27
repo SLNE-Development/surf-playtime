@@ -65,6 +65,12 @@ object PlayerAfkListener : Listener {
     private fun broadcastChange(uuid: UUID, isAfk: Boolean) {
         afkService.changeState(uuid, isAfk)
 
+        if (isAfk) {
+            plugin.afkPlayers.add(uuid)
+        } else {
+            plugin.afkPlayers.remove(uuid)
+        }
+
         Bukkit.getPlayer(uuid)?.sendText {
             appendInfoPrefix()
             info("Du bist nun ")
