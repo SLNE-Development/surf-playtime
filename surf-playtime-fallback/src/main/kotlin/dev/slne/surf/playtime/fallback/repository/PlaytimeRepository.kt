@@ -11,12 +11,17 @@ import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toSet
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 val playtimeRepository = PlaytimeRepository()
 
 class PlaytimeRepository {
     suspend fun saveSession(session: PlaytimeSession) = suspendTransaction {
+        if (session.startTime.until(session.endTime, ChronoUnit.MINUTES) < 1) {
+            return@suspendTransaction
+        }
+
         PlaytimeSessionsTable.upsert {
             it[sessionUuid] = session.sessionId
             it[this.playerUuid] = session.playerUuid
