@@ -69,7 +69,7 @@ fun playtimeCommand() = commandTree("playtime") {
                 if (targetPlayer == null) {
                     sender.sendText {
                         appendErrorPrefix()
-                        error("Spieler '$player' wurde nicht gefunden.")
+                        error("Spieler wurde nicht gefunden.")
                     }
                     return@launch
                 }
