@@ -19,7 +19,7 @@ object PlayerJoinListener : Listener {
             PlaytimeSession(
                 event.player.uniqueId,
                 UUID.randomUUID(),
-                surfCoreApi.getCurrentServerName(),
+                surfCoreApi.getCurrentServerDisplayName(),
                 surfCoreApi.getCurrentServerCategory(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
