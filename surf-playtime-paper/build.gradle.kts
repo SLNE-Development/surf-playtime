@@ -8,7 +8,6 @@ surfPaperPluginApi {
     foliaSupported(true)
 
     withCorePaper()
-    withSurfRedis()
 
     authors.add("red")
 }

@@ -8,11 +8,9 @@ import dev.slne.surf.playtime.paper.listener.PlayerAfkListener
 import dev.slne.surf.playtime.paper.listener.PlayerJoinListener
 import dev.slne.surf.playtime.paper.listener.PlayerQuitListener
 import dev.slne.surf.playtime.paper.playtime.playtimeTasks
-import dev.slne.surf.redis.sync.set.SyncSet
 import dev.slne.surf.surfapi.bukkit.api.event.register
 import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.*
 
 val plugin get() = JavaPlugin.getPlugin(PaperMain::class.java)
 
@@ -23,8 +21,6 @@ class PaperMain : SuspendingJavaPlugin() {
         PlayerAfkListener.register()
         PlayerAfkListener.afkCheckTask()
         playtimeTasks.startAll()
-
-        redisLoader.connect()
 
         runBlocking {
             databaseBridge.initialize(dataPath)
@@ -40,7 +36,6 @@ class PaperMain : SuspendingJavaPlugin() {
             playtimeService.flushAll()
         }
 
-        redisLoader.disconnect()
         databaseBridge.disconnect()
     }
 }
