@@ -11,6 +11,7 @@ class AfkStateChangeEvent(
     override fun getHandlers() = handlerList
 
     companion object {
+        @JvmStatic
         val handlerList = HandlerList()
     }
 }
