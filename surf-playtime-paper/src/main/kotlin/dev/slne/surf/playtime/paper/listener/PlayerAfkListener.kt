@@ -1,9 +1,8 @@
 package dev.slne.surf.playtime.paper.listener
 
-import dev.slne.surf.playtime.api.redis.event.AfkStateChangeRedisEvent
+import dev.slne.surf.playtime.api.event.AfkStateChangeEvent
 import dev.slne.surf.playtime.core.service.afkService
 import dev.slne.surf.playtime.paper.plugin
-import dev.slne.surf.playtime.paper.redisApi
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.util.mutableObject2BooleanMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObject2LongMapOf
@@ -65,11 +64,7 @@ object PlayerAfkListener : Listener {
     private fun broadcastChange(uuid: UUID, isAfk: Boolean) {
         afkService.changeState(uuid, isAfk)
 
-        if (isAfk) {
-            plugin.afkPlayers.add(uuid)
-        } else {
-            plugin.afkPlayers.remove(uuid)
-        }
+        AfkStateChangeEvent(uuid, isAfk).callEvent()
 
         Bukkit.getPlayer(uuid)?.sendText {
             appendInfoPrefix()
@@ -80,12 +75,5 @@ object PlayerAfkListener : Listener {
                 info("nicht mehr AFK.")
             }
         }
-
-        redisApi.publishEvent(
-            AfkStateChangeRedisEvent(
-                uuid = uuid,
-                isAfk = isAfk
-            )
-        )
     }
 }

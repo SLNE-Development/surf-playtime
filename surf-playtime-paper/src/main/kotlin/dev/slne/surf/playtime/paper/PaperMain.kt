@@ -17,7 +17,6 @@ import java.util.*
 val plugin get() = JavaPlugin.getPlugin(PaperMain::class.java)
 
 class PaperMain : SuspendingJavaPlugin() {
-    lateinit var afkPlayers: SyncSet<UUID>
     override fun onEnable() {
         PlayerJoinListener.register()
         PlayerQuitListener.register()

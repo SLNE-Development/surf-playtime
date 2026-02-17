@@ -1,6 +1,7 @@
 package dev.slne.surf.playtime.fallback.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.playtime.api.event.AfkStateChangeEvent
 import dev.slne.surf.playtime.core.service.AfkService
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.util.Services

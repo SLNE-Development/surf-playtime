@@ -1,7 +1,3 @@
 plugins {
-    id("dev.slne.surf.surfapi.gradle.core")
-}
-
-surfCoreApi {
-    withSurfRedis()
+    id("dev.slne.surf.surfapi.gradle.paper-raw")
 }
