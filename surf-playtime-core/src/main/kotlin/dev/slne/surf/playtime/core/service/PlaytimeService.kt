@@ -41,8 +41,8 @@ interface PlaytimeService {
     ): ObjectSet<PlaytimeSession>
 
     suspend fun flushAll() {
-        for (session in activePlaytimeSessions) {
-            saveSession(session.apply {
+        activePlaytimeSessions.toSet().forEach {
+            saveSession(it.apply {
                 endTime = LocalDateTime.now()
             })
         }
