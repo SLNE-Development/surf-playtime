@@ -4,8 +4,6 @@ import dev.slne.surf.playtime.api.event.AfkStateChangeEvent
 import dev.slne.surf.playtime.core.service.afkService
 import dev.slne.surf.playtime.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.util.mutableObject2BooleanMapOf
-import dev.slne.surf.surfapi.core.api.util.mutableObject2LongMapOf
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,20 +11,19 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.minutes
 
 object PlayerAfkListener : Listener {
     private val afkTime = 3.minutes.inWholeMilliseconds
-    private val lastMovedTime = mutableObject2LongMapOf<UUID>()
-    private val currentSentState = mutableObject2BooleanMapOf<UUID>()
+
+    private val lastMovedTime = ConcurrentHashMap<UUID, Long>()
+    private val currentSentState = ConcurrentHashMap<UUID, Boolean>()
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
-        if (!event.hasChangedOrientation()) {
-            return
-        }
-
+        if (!event.hasChangedOrientation()) return
         lastMovedTime[event.player.uniqueId] = System.currentTimeMillis()
     }
 
@@ -37,25 +34,22 @@ object PlayerAfkListener : Listener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        val uuid = event.player.uniqueId
-
-        lastMovedTime.removeLong(uuid)
-        currentSentState.removeBoolean(uuid)
+        lastMovedTime.remove(event.player.uniqueId)
+        currentSentState.remove(event.player.uniqueId)
     }
 
     fun afkCheckTask() {
-        plugin.logger.info("Starting Afk check task...")
         Bukkit.getAsyncScheduler().runAtFixedRate(plugin, {
             val currentTime = System.currentTimeMillis()
 
-            lastMovedTime.object2LongEntrySet().fastForEach { entry ->
-                val uuid = entry.key
-                val lastMoved = entry.longValue
-                val timeSinceLastMove = currentTime - lastMoved
-                val isAfk = timeSinceLastMove >= afkTime
+            lastMovedTime.forEach { (uuid, lastMoved) ->
+                val isAfk = currentTime - lastMoved >= afkTime
                 val previousState = currentSentState.put(uuid, isAfk)
-                if (previousState != isAfk) {
-                    broadcastChange(uuid, isAfk)
+
+                if (previousState == null || previousState != isAfk) {
+                    Bukkit.getScheduler().run {
+                        broadcastChange(uuid, isAfk)
+                    }
                 }
             }
         }, 0L, 1L, TimeUnit.SECONDS)
@@ -69,11 +63,7 @@ object PlayerAfkListener : Listener {
         Bukkit.getPlayer(uuid)?.sendText {
             appendInfoPrefix()
             info("Du bist nun ")
-            if (isAfk) {
-                info("AFK.")
-            } else {
-                info("nicht mehr AFK.")
-            }
+            if (isAfk) info("AFK.") else info("nicht mehr AFK.")
         }
     }
 }
