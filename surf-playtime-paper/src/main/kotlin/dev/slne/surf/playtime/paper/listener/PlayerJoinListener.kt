@@ -2,6 +2,7 @@ package dev.slne.surf.playtime.paper.listener
 
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.playtime.api.session.PlaytimeSession
+import dev.slne.surf.playtime.core.service.afkService
 import dev.slne.surf.playtime.core.service.playtimeService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -12,6 +13,8 @@ import java.util.*
 object PlayerJoinListener : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
+        afkService.changeState(event.player.uniqueId, false)
+
         playtimeService.activePlaytimeSessions.add(
             PlaytimeSession(
                 event.player.uniqueId,
