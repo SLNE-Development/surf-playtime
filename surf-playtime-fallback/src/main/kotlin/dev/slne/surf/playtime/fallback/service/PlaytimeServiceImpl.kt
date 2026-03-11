@@ -4,14 +4,14 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.core.service.PlaytimeService
 import dev.slne.surf.playtime.fallback.repository.playtimeRepository
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
+import io.ktor.util.collections.*
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
 import java.util.*
 
 @AutoService(PlaytimeService::class)
 class PlaytimeServiceImpl : PlaytimeService, Services.Fallback {
-    override val activePlaytimeSessions = mutableObjectSetOf<PlaytimeSession>()
+    override val activePlaytimeSessions = ConcurrentSet<PlaytimeSession>()
     override suspend fun saveSession(session: PlaytimeSession) {
         playtimeRepository.saveSession(session)
     }

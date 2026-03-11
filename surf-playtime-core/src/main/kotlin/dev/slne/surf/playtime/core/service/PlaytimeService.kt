@@ -10,7 +10,7 @@ import java.util.*
 val playtimeService = requiredService<PlaytimeService>()
 
 interface PlaytimeService {
-    val activePlaytimeSessions: ObjectSet<PlaytimeSession>
+    val activePlaytimeSessions: Set<PlaytimeSession>
 
     suspend fun saveSession(session: PlaytimeSession)
     suspend fun loadSessions(playerUuid: UUID): ObjectSet<PlaytimeSession>
