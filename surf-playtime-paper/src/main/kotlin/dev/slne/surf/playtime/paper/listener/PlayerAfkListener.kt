@@ -58,7 +58,9 @@ object PlayerAfkListener : Listener {
     private fun broadcastChange(uuid: UUID, isAfk: Boolean) {
         afkService.changeState(uuid, isAfk)
 
-        AfkStateChangeEvent(uuid, isAfk).callEvent()
+        Bukkit.getGlobalRegionScheduler().run(plugin) {
+            AfkStateChangeEvent(uuid, isAfk).callEvent()
+        }
 
         Bukkit.getPlayer(uuid)?.sendText {
             appendInfoPrefix()
