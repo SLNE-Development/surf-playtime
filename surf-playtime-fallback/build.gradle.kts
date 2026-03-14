@@ -4,6 +4,7 @@ plugins {
 
 surfCoreApi {
     withSurfRedis()
+    withCoreCommon()
 }
 
 dependencies {

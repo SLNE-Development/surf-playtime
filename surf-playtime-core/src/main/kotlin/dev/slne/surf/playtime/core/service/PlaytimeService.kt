@@ -48,11 +48,15 @@ interface PlaytimeService {
         }
     }
 
-    fun updateAllActiveSessions() {
+    suspend fun updateAllActiveSessions() {
         val now = LocalDateTime.now()
 
         activePlaytimeSessions.forEach {
             it.endTime = now
+
+            if (!afkService.isAfk(it.playerUuid)) {
+                payCheckService.increasePlaytime(it.playerUuid, 1)
+            }
         }
     }
 }

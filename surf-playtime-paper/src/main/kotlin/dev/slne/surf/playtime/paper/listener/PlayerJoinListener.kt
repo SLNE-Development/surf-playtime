@@ -1,9 +1,12 @@
 package dev.slne.surf.playtime.paper.listener
 
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.core.service.afkService
+import dev.slne.surf.playtime.core.service.payCheckService
 import dev.slne.surf.playtime.core.service.playtimeService
+import dev.slne.surf.playtime.paper.plugin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -25,5 +28,9 @@ object PlayerJoinListener : Listener {
                 LocalDateTime.now()
             )
         )
+
+        plugin.launch {
+            payCheckService.cachePlaytime(event.player.uniqueId)
+        }
     }
 }
