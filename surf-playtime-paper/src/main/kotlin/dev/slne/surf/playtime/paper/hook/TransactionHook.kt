@@ -1,6 +1,7 @@
 package dev.slne.surf.playtime.paper.hook
 
 import dev.slne.surf.playtime.core.castCoinFormat
+import dev.slne.surf.playtime.core.service.payCheckService
 import dev.slne.surf.playtime.paper.playtimeConfig
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.transaction.api.currency.Currency
@@ -40,6 +41,11 @@ object TransactionHook {
             info("Du hast einen PayCheck von ")
             variableValue(castCoinFormat.format(playtimeConfig.paycheck.amount))
             info(" erhalten!")
+        }
+
+        player.sendText {
+            appendInfoPrefix()
+            info(payCheckService.getCurrentPlaytime(player.uniqueId))
         }
     }
 }
