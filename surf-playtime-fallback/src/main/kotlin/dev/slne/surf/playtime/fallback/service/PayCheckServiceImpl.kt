@@ -47,4 +47,8 @@ class PayCheckServiceImpl : PayCheckService, Services.Fallback {
                 SurfServer.current().displayName
             )
     }
+
+    override fun invalidateCache(playerUuid: UUID) {
+        currentServerPlaytime.remove(playerUuid)
+    }
 }

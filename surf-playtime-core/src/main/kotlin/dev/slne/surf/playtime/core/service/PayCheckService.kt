@@ -14,4 +14,5 @@ interface PayCheckService {
 
     suspend fun handleUpdate(playerUuid: UUID, newPlaytime: Long)
     suspend fun cachePlaytime(playerUuid: UUID)
+    fun invalidateCache(playerUuid: UUID)
 }
