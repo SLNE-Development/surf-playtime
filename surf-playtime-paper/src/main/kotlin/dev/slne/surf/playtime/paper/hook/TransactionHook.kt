@@ -1,5 +1,6 @@
 package dev.slne.surf.playtime.paper.hook
 
+import dev.slne.surf.playtime.core.castCoinFormat
 import dev.slne.surf.playtime.paper.playtimeConfig
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.transaction.api.currency.Currency
@@ -15,8 +16,7 @@ object TransactionHook {
             player.sendText {
                 appendErrorPrefix()
                 error("Du kannst keine weiteren PayChecks erhalten, weil du bereits mehr als ")
-                variableValue(playtimeConfig.paycheck.maxBalance.toString())
-                append(Currency.default().symbolDisplay)
+                variableValue(castCoinFormat.format(playtimeConfig.paycheck.maxBalance))
                 error(" hast!")
             }
             return
@@ -38,8 +38,7 @@ object TransactionHook {
         player.sendText {
             appendInfoPrefix()
             info("Du hast einen PayCheck von ")
-            variableValue(playtimeConfig.paycheck.amount)
-            append(Currency.default().symbolDisplay)
+            variableValue(castCoinFormat.format(playtimeConfig.paycheck.amount))
             info(" erhalten!")
         }
     }
