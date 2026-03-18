@@ -18,7 +18,7 @@ object PlayerJoinListener : Listener {
     fun onJoin(event: PlayerJoinEvent) {
         afkService.changeState(event.player.uniqueId, false)
 
-        playtimeService.activePlaytimeSessions.add(
+        playtimeService.cacheSession(
             PlaytimeSession(
                 event.player.uniqueId,
                 UUID.randomUUID(),

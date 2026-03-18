@@ -11,13 +11,24 @@ import java.util.*
 
 @AutoService(PlaytimeService::class)
 class PlaytimeServiceImpl : PlaytimeService, Services.Fallback {
-    override val activePlaytimeSessions = ConcurrentSet<PlaytimeSession>()
+    private val _sessions = ConcurrentMap<UUID, PlaytimeSession>()
+
+    override val activePlaytimeSessions get() = _sessions.values.toSet()
     override suspend fun saveSession(session: PlaytimeSession) {
         playtimeRepository.saveSession(session)
     }
 
+
     override suspend fun loadSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> =
         playtimeRepository.loadSessions(playerUuid)
+
+    override fun cacheSession(session: PlaytimeSession) {
+        _sessions[session.sessionId] = session
+    }
+
+    override fun removeCachedSession(sessionId: UUID) {
+        _sessions.remove(sessionId)
+    }
 
     override suspend fun loadSessionsByServer(
         playerUuid: UUID,

@@ -76,11 +76,14 @@ object PlayerAfkListener : Listener {
                     playtimeService.saveSession(activeSession)
                 }
 
-                playtimeService.activePlaytimeSessions.remove(activeSession)
+                val bool =
+                    playtimeService.removeCachedSession(activeSession.sessionId)
+
+                println("Removed session: $bool")
             }
         } else {
             if (activeSession == null) {
-                playtimeService.activePlaytimeSessions.add(
+                playtimeService.cacheSession(
                     PlaytimeSession(
                         uuid,
                         UUID.randomUUID(),
@@ -92,6 +95,9 @@ object PlayerAfkListener : Listener {
                 )
             }
         }
+
+        println("Player $uuid is now ${if (isAfk) "AFK" else "not AFK"}")
+        println("Sessions: ${playtimeService.activePlaytimeSessions.filter { it.playerUuid == uuid }}")
 
         Bukkit.getGlobalRegionScheduler().run(plugin) {
             AfkStateChangeEvent(uuid, isAfk).callEvent()

@@ -23,7 +23,7 @@ object PlayerQuitListener : Listener {
             playtimeService.saveSession(session.apply {
                 endTime = LocalDateTime.now()
             })
-            playtimeService.activePlaytimeSessions.removeIf { it.playerUuid == event.player.uniqueId }
+            playtimeService.removeCachedSession(session.sessionId)
         }
     }
 }
