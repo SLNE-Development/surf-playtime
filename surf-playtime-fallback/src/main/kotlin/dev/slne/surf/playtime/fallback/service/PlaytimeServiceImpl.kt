@@ -16,6 +16,7 @@ class PlaytimeServiceImpl : PlaytimeService, Services.Fallback {
     override val activePlaytimeSessions get() = _sessions.values.toSet()
     override suspend fun saveSession(session: PlaytimeSession) {
         playtimeRepository.saveSession(session)
+        cacheSession(session)
     }
 
 
