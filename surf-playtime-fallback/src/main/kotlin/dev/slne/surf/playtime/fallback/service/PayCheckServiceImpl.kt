@@ -21,7 +21,7 @@ class PayCheckServiceImpl : PayCheckService, Services.Fallback {
 
     override fun getCurrentPlaytime(playerUuid: UUID) = currentServerPlaytime[playerUuid] ?: 0L
 
-    override suspend fun increasePlaytime(playerUuid: UUID, amount: Long) {
+    override suspend fun onIncreasedPlaytime(playerUuid: UUID, amount: Long) {
         currentServerPlaytime.merge(playerUuid, amount) { old, new -> old + new }.also {
             handleUpdate(playerUuid, getCurrentPlaytime(playerUuid))
         }
