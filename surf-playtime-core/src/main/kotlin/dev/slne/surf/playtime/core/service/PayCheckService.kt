@@ -10,7 +10,7 @@ interface PayCheckService {
     fun create(config: PlaytimeConfig)
 
     fun getCurrentPlaytime(playerUuid: UUID): Long
-    suspend fun onIncreasedPlaytime(playerUuid: UUID, amount: Long)
+    suspend fun increasePlaytime(playerUuid: UUID, amount: Long)
 
     suspend fun handleUpdate(playerUuid: UUID, newPlaytime: Long)
     suspend fun cachePlaytime(playerUuid: UUID)

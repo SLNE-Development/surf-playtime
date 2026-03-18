@@ -49,7 +49,7 @@ interface PlaytimeService {
         activePlaytimeSessions.forEach {
             if (!afkService.isAfk(it.playerUuid)) {
                 it.seconds++
-                payCheckService.onIncreasedPlaytime(it.playerUuid, 1)
+                payCheckService.increasePlaytime(it.playerUuid, 1)
             }
         }
     }
