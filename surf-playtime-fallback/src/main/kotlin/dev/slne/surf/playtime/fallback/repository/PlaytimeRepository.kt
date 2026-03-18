@@ -1,13 +1,15 @@
 package dev.slne.surf.playtime.fallback.repository
 
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.*
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.and
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.sum
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.select
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
 import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.fallback.table.PlaytimeSessionsTable
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
+import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -41,11 +43,7 @@ class PlaytimeRepository {
                     category = row[PlaytimeSessionsTable.serverCategory],
                     seconds = row[PlaytimeSessionsTable.seconds],
                 )
-            }.let { sessions ->
-                val set = mutableObjectSetOf<PlaytimeSession>()
-                set.addAll(sessions.toSet())
-                set
-            }
+            }.toSet().toObjectSet()
     }
 
     suspend fun loadSessionsByServer(
@@ -62,11 +60,7 @@ class PlaytimeRepository {
                     category = row[PlaytimeSessionsTable.serverCategory],
                     seconds = row[PlaytimeSessionsTable.seconds],
                 )
-            }.let { sessions ->
-                val set = mutableObjectSetOf<PlaytimeSession>()
-                set.addAll(sessions.toSet())
-                set
-            }
+            }.toSet().toObjectSet()
     }
 
     suspend fun loadPlaytimeSecondsByServer(
@@ -99,10 +93,6 @@ class PlaytimeRepository {
                     category = row[PlaytimeSessionsTable.serverCategory],
                     seconds = row[PlaytimeSessionsTable.seconds],
                 )
-            }.let { sessions ->
-                val set = mutableObjectSetOf<PlaytimeSession>()
-                set.addAll(sessions.toSet())
-                set
-            }
+            }.toSet().toObjectSet()
     }
 }
