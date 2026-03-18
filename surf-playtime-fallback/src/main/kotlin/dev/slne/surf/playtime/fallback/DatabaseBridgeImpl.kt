@@ -5,7 +5,6 @@ import dev.slne.surf.database.DatabaseApi
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.SchemaUtils
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.playtime.core.DatabaseBridge
-import dev.slne.surf.playtime.fallback.converter.PlaytimeSessionConverter
 import dev.slne.surf.playtime.fallback.table.PlaytimeSessionsTable
 import net.kyori.adventure.util.Services
 import java.nio.file.Path
@@ -16,13 +15,9 @@ class DatabaseBridgeImpl : DatabaseBridge, Services.Fallback {
     override suspend fun initialize(path: Path) {
         databaseApi = DatabaseApi.create(path)
 
-        PlaytimeSessionConverter.renameOldTableIfNeeded()
-
         suspendTransaction {
             SchemaUtils.create(PlaytimeSessionsTable)
         }
-
-        PlaytimeSessionConverter.migrateData()
     }
 
     override fun disconnect() {
