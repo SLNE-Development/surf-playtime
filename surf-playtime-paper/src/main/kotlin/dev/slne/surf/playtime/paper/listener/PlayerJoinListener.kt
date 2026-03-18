@@ -10,7 +10,6 @@ import dev.slne.surf.playtime.paper.plugin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import java.time.LocalDateTime
 import java.util.*
 
 object PlayerJoinListener : Listener {
@@ -23,9 +22,7 @@ object PlayerJoinListener : Listener {
                 event.player.uniqueId,
                 UUID.randomUUID(),
                 surfCoreApi.getCurrentServerDisplayName(),
-                surfCoreApi.getCurrentServerCategory(),
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                surfCoreApi.getCurrentServerCategory()
             )
         )
 

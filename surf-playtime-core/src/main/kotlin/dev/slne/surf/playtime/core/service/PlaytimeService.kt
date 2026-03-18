@@ -4,7 +4,6 @@ import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import java.time.LocalDateTime
 import java.util.*
 
 val playtimeService = requiredService<PlaytimeService>()
@@ -42,19 +41,14 @@ interface PlaytimeService {
 
     suspend fun flushAll() {
         activePlaytimeSessions.toSet().forEach {
-            saveSession(it.apply {
-                endTime = LocalDateTime.now()
-            })
+            saveSession(it)
         }
     }
 
     suspend fun updateAllActiveSessions() {
-        val now = LocalDateTime.now()
-
         activePlaytimeSessions.forEach {
-            it.endTime = now
-
             if (!afkService.isAfk(it.playerUuid)) {
+                it.seconds++
                 payCheckService.increasePlaytime(it.playerUuid, 1)
             }
         }

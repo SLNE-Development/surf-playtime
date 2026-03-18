@@ -12,14 +12,13 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toSet
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 val playtimeRepository = PlaytimeRepository()
 
 class PlaytimeRepository {
     suspend fun saveSession(session: PlaytimeSession) = suspendTransaction {
-        if (session.startTime.until(session.endTime, ChronoUnit.MINUTES) < 1) {
+        if (session.seconds < 60) {
             return@suspendTransaction
         }
 
@@ -28,8 +27,7 @@ class PlaytimeRepository {
             it[this.playerUuid] = session.playerUuid
             it[serverName] = session.server
             it[serverCategory] = session.category
-            it[startTime] = session.startTime
-            it[endTime] = session.endTime
+            it[seconds] = session.seconds
         }
     }
 
@@ -41,8 +39,7 @@ class PlaytimeRepository {
                     playerUuid = playerUuid,
                     server = row[PlaytimeSessionsTable.serverName],
                     category = row[PlaytimeSessionsTable.serverCategory],
-                    startTime = row[PlaytimeSessionsTable.startTime],
-                    endTime = row[PlaytimeSessionsTable.endTime],
+                    seconds = row[PlaytimeSessionsTable.seconds],
                 )
             }.let { sessions ->
                 val set = mutableObjectSetOf<PlaytimeSession>()
@@ -63,8 +60,7 @@ class PlaytimeRepository {
                     playerUuid = playerUuid,
                     server = row[PlaytimeSessionsTable.serverName],
                     category = row[PlaytimeSessionsTable.serverCategory],
-                    startTime = row[PlaytimeSessionsTable.startTime],
-                    endTime = row[PlaytimeSessionsTable.endTime],
+                    seconds = row[PlaytimeSessionsTable.seconds],
                 )
             }.let { sessions ->
                 val set = mutableObjectSetOf<PlaytimeSession>()
@@ -77,20 +73,7 @@ class PlaytimeRepository {
         playerUuid: UUID,
         serverName: String
     ): Long = suspendTransaction {
-        val startUnix = CustomFunction(
-            "UNIX_TIMESTAMP",
-            LongColumnType(),
-            PlaytimeSessionsTable.startTime
-        )
-
-        val endUnix = CustomFunction(
-            "UNIX_TIMESTAMP",
-            LongColumnType(),
-            PlaytimeSessionsTable.endTime
-        )
-
-        val diff = endUnix - startUnix
-        val sumExpr = diff.sum()
+        val sumExpr = PlaytimeSessionsTable.seconds.sum()
 
         PlaytimeSessionsTable
             .select(sumExpr)
@@ -101,7 +84,6 @@ class PlaytimeRepository {
             .firstOrNull()
             ?.get(sumExpr) ?: 0L
     }
-
 
     suspend fun loadSessionsByCategory(
         playerUuid: UUID,
@@ -115,8 +97,7 @@ class PlaytimeRepository {
                     playerUuid = playerUuid,
                     server = row[PlaytimeSessionsTable.serverName],
                     category = row[PlaytimeSessionsTable.serverCategory],
-                    startTime = row[PlaytimeSessionsTable.startTime],
-                    endTime = row[PlaytimeSessionsTable.endTime],
+                    seconds = row[PlaytimeSessionsTable.seconds],
                 )
             }.let { sessions ->
                 val set = mutableObjectSetOf<PlaytimeSession>()

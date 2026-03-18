@@ -1,7 +1,5 @@
 package dev.slne.surf.playtime.api.session
 
-import java.time.Duration
-import java.time.LocalDateTime
 import java.util.*
 
 data class PlaytimeSession(
@@ -9,8 +7,7 @@ data class PlaytimeSession(
     val sessionId: UUID,
     val server: String,
     val category: String,
-    val startTime: LocalDateTime,
-    var endTime: LocalDateTime
+    var seconds: Long = 0L
 ) {
-    val durationSeconds get() = Duration.between(startTime, endTime).seconds
+    val durationSeconds get() = seconds
 }
