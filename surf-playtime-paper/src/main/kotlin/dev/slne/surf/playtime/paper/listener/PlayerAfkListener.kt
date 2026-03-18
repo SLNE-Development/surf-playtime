@@ -1,7 +1,11 @@
 package dev.slne.surf.playtime.paper.listener
 
+import com.github.shynixn.mccoroutine.folia.launch
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.playtime.api.event.AfkStateChangeEvent
+import dev.slne.surf.playtime.api.session.PlaytimeSession
 import dev.slne.surf.playtime.core.service.afkService
+import dev.slne.surf.playtime.core.service.playtimeService
 import dev.slne.surf.playtime.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
@@ -10,6 +14,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -57,6 +62,36 @@ object PlayerAfkListener : Listener {
 
     private fun broadcastChange(uuid: UUID, isAfk: Boolean) {
         afkService.changeState(uuid, isAfk)
+
+        val now = LocalDateTime.now()
+
+        val activeSession = playtimeService.activePlaytimeSessions
+            .find { it.playerUuid == uuid }
+
+        if (isAfk) {
+            if (activeSession != null) {
+                activeSession.endTime = now
+
+                plugin.launch {
+                    playtimeService.saveSession(activeSession)
+                }
+
+                playtimeService.activePlaytimeSessions.remove(activeSession)
+            }
+        } else {
+            if (activeSession == null) {
+                playtimeService.activePlaytimeSessions.add(
+                    PlaytimeSession(
+                        uuid,
+                        UUID.randomUUID(),
+                        surfCoreApi.getCurrentServerDisplayName(),
+                        surfCoreApi.getCurrentServerCategory(),
+                        now,
+                        now
+                    )
+                )
+            }
+        }
 
         Bukkit.getGlobalRegionScheduler().run(plugin) {
             AfkStateChangeEvent(uuid, isAfk).callEvent()
