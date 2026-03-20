@@ -12,7 +12,7 @@ import kotlin.io.path.Path
 
 @AutoService(Microservice::class)
 class PlaytimeMicroservice : Microservice() {
-    private val databaseApi = DatabaseApi.create(Path("."))
+    private val databaseApi = DatabaseApi.create(Path("config"))
     private val rabbitApi = ServerRabbitMQApi.create(1, "surf-playtime")
 
     override suspend fun onBootstrap(args: List<String>) {
