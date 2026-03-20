@@ -8,10 +8,6 @@ class PaperLoader(
 ) {
     val rabbitApi = ClientRabbitMQApi.create(1, "surf-playtime", dataPath)
 
-    suspend fun onBootstrap() {
-
-    }
-
     @Suppress("UnusedExpression")
     suspend fun onLoad() {
         // Rabbit

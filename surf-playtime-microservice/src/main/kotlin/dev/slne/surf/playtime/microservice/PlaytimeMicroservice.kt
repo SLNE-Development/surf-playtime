@@ -23,7 +23,6 @@ class PlaytimeMicroservice : Microservice() {
         }
 
         rabbitApi.registerRequestHandler(PlaytimeSessionHandler)
-
         rabbitApi.freezeAndConnect()
     }
 
