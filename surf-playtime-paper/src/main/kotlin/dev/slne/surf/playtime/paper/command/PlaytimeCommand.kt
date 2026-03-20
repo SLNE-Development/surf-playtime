@@ -6,8 +6,8 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
-import dev.slne.surf.playtime.api.session.PlaytimeSession
-import dev.slne.surf.playtime.core.service.playtimeService
+import dev.slne.surf.playtime.api.common.session.PlaytimeSession
+import dev.slne.surf.playtime.core.common.service.playtimeService
 import dev.slne.surf.playtime.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import it.unimi.dsi.fastutil.objects.ObjectSet

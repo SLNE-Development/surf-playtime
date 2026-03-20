@@ -1,0 +1,19 @@
+package dev.slne.surf.playtime.api.common
+
+import dev.slne.surf.playtime.api.common.session.PlaytimeSession
+import dev.slne.surf.surfapi.core.api.util.requiredService
+import it.unimi.dsi.fastutil.objects.ObjectSet
+import java.util.*
+
+val surfPlaytimeApi = requiredService<SurfPlaytimeApi>()
+
+interface SurfPlaytimeApi {
+    fun getCurrentPlaytimeSession(playerUuid: UUID): PlaytimeSession?
+    fun isPlayerAfk(playerUuid: UUID): Boolean
+
+    suspend fun getPlaytimeByServer(playerUuid: UUID, server: String): Long
+    suspend fun getPlaytimeByCategory(playerUuid: UUID, category: String): Long
+    suspend fun getTotalPlaytime(playerUuid: UUID): Long?
+
+    suspend fun getAllPlaytimeSessions(playerUuid: UUID): ObjectSet<PlaytimeSession>
+}

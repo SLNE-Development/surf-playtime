@@ -1,9 +1,9 @@
 package dev.slne.surf.playtime.paper
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
-import dev.slne.surf.playtime.core.databaseBridge
-import dev.slne.surf.playtime.core.service.payCheckService
-import dev.slne.surf.playtime.core.service.playtimeService
+import dev.slne.surf.playtime.core.common.service.payCheckService
+import dev.slne.surf.playtime.core.common.service.playtimeService
+import dev.slne.surf.playtime.core.paper.PaperPlaytimeInstance
 import dev.slne.surf.playtime.paper.command.playtimeAdminCommand
 import dev.slne.surf.playtime.paper.command.playtimeCommand
 import dev.slne.surf.playtime.paper.config.PlaytimeConfigManager
@@ -13,13 +13,18 @@ import dev.slne.surf.playtime.paper.listener.PlayerQuitListener
 import dev.slne.surf.playtime.paper.playtime.playtimeTasks
 import dev.slne.surf.surfapi.bukkit.api.event.register
 import dev.slne.surf.surfapi.bukkit.api.extensions.pluginManager
-import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
 
 val plugin get() = JavaPlugin.getPlugin(PaperMain::class.java)
 
 class PaperMain : SuspendingJavaPlugin() {
-    override fun onEnable() {
+    override suspend fun onLoadAsync() {
+        PaperPlaytimeInstance.paperLoader.onLoad()
+    }
+
+    override suspend fun onEnableAsync() {
+        PaperPlaytimeInstance.paperLoader.onEnable()
+
         payCheckService.create(playtimeConfig)
 
         PlayerJoinListener.register()
@@ -28,22 +33,15 @@ class PaperMain : SuspendingJavaPlugin() {
         PlayerAfkListener.afkCheckTask()
         playtimeTasks.startAll()
 
-        runBlocking {
-            databaseBridge.initialize(dataPath)
-        }
-
         playtimeCommand()
         playtimeAdminCommand()
     }
 
-    override fun onDisable() {
+    override suspend fun onDisableAsync() {
         playtimeTasks.stopAll()
+        playtimeService.flushAll()
 
-        runBlocking {
-            playtimeService.flushAll()
-        }
-
-        databaseBridge.disconnect()
+        PaperPlaytimeInstance.paperLoader.onDisable()
     }
 }
 

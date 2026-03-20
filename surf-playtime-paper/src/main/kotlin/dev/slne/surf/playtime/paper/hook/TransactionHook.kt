@@ -1,6 +1,6 @@
 package dev.slne.surf.playtime.paper.hook
 
-import dev.slne.surf.playtime.core.castCoinFormat
+import dev.slne.surf.playtime.core.common.castCoinFormat
 import dev.slne.surf.playtime.paper.playtimeConfig
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.transaction.api.currency.Currency

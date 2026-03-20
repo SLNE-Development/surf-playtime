@@ -19,7 +19,7 @@ surfPaperPluginApi {
 }
 
 dependencies {
-    api(project(":surf-playtime-core"))
-    runtimeOnly(project(":surf-playtime-fallback"))
+    api(projects.surfPlaytimeCore.surfPlaytimeCorePaper)
+    api(projects.surfPlaytimeApi.surfPlaytimeApiPaper)
     compileOnly("dev.slne.surf.transaction:surf-transaction-api:1.21.11-3.0.1")
 }
