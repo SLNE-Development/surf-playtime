@@ -1,7 +1,7 @@
 package dev.slne.surf.playtime.paper.playtime
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.playtime.core.service.playtimeService
+import dev.slne.surf.playtime.core.common.service.playtimeService
 import dev.slne.surf.playtime.paper.plugin
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask
 import org.bukkit.Bukkit

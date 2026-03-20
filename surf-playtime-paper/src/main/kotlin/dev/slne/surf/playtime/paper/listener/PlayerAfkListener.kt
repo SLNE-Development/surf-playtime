@@ -2,10 +2,10 @@ package dev.slne.surf.playtime.paper.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.core.api.common.surfCoreApi
-import dev.slne.surf.playtime.api.event.AfkStateChangeEvent
-import dev.slne.surf.playtime.api.session.PlaytimeSession
-import dev.slne.surf.playtime.core.service.afkService
-import dev.slne.surf.playtime.core.service.playtimeService
+import dev.slne.surf.playtime.api.common.session.PlaytimeSession
+import dev.slne.surf.playtime.api.paper.event.AfkStateChangeEvent
+import dev.slne.surf.playtime.core.common.service.AfkService
+import dev.slne.surf.playtime.core.common.service.playtimeService
 import dev.slne.surf.playtime.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
@@ -61,7 +61,7 @@ object PlayerAfkListener : Listener {
     }
 
     private fun broadcastChange(uuid: UUID, isAfk: Boolean) {
-        afkService.changeState(uuid, isAfk)
+        AfkService.changeState(uuid, isAfk)
 
         val now = LocalDateTime.now()
 

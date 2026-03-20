@@ -1,7 +1,7 @@
 package dev.slne.surf.playtime.paper.hook
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.playtime.core.bridge.TransactionBridge
+import dev.slne.surf.playtime.core.common.bridge.TransactionBridge
 import dev.slne.surf.playtime.paper.hasTransactionHook
 import dev.slne.surf.playtime.paper.plugin
 import net.kyori.adventure.util.Services
