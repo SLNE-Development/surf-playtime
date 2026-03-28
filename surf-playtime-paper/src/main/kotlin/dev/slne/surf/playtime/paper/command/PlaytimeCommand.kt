@@ -12,6 +12,8 @@ import dev.slne.surf.playtime.paper.plugin
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Deferred
+import java.time.Duration
+import java.time.LocalDateTime
 
 fun playtimeCommand() = commandTree("playtime") {
     withAliases("pt")
@@ -21,11 +23,21 @@ fun playtimeCommand() = commandTree("playtime") {
         plugin.launch {
             val playtime = playtimeService.getAndLoadSessions(player.uniqueId)
             val summedPlaytime = playtime.sumPlaytime()
+            val todaySeconds = playtime.calcTodaySeconds()
 
             player.sendText {
                 appendNewline()
                 appendInfoPrefix()
                 info("Deine Spielzeit")
+                if (todaySeconds > 0) {
+                    appendNewline().appendInfoPrefix()
+                    append {
+                        appendNewline().appendInfoPrefix()
+                        variableKey("Heute")
+                        spacer(": ")
+                        variableValue(todaySeconds.formatSeconds())
+                    }
+                }
                 appendNewline().appendInfoPrefix()
                 append {
                     appendNewline().appendInfoPrefix()
@@ -76,12 +88,23 @@ fun playtimeCommand() = commandTree("playtime") {
 
                 val playtime = playtimeService.getAndLoadSessions(targetPlayer.uuid)
                 val summedPlaytime = playtime.sumPlaytime()
+                val todaySeconds = playtime.calcTodaySeconds()
 
                 sender.sendText {
                     appendNewline()
                     appendInfoPrefix()
                     info("Spielzeit von ")
                     variableValue(targetPlayer.lastKnownName ?: "Unbekannt")
+                    if (todaySeconds > 0) {
+                        appendNewline().appendInfoPrefix()
+                        append {
+                            appendNewline().appendInfoPrefix()
+                            variableKey("Heute")
+                            spacer(": ")
+                            variableValue(todaySeconds.formatSeconds())
+                        }
+                    }
+
                     appendNewline().appendInfoPrefix()
                     append {
                         appendNewline().appendInfoPrefix()
@@ -125,6 +148,23 @@ private fun ObjectSet<PlaytimeSession>.sumPlaytime() = this
                 sessionsByServer.sumOf { it.durationSeconds }
             }
     }
+
+private fun ObjectSet<PlaytimeSession>.calcTodaySeconds(): Long {
+    val now = LocalDateTime.now()
+    val startOfToday = now.toLocalDate().atStartOfDay()
+    val endOfToday = startOfToday.plusDays(1)
+
+    return this.sumOf { session ->
+        val sessionStart = session.startTime
+        val sessionEnd = session.endTime
+
+        val effectiveStart = maxOf(sessionStart, startOfToday)
+        val effectiveEnd = minOf(sessionEnd, endOfToday)
+
+        if (effectiveStart >= effectiveEnd) 0
+        else Duration.between(effectiveStart, effectiveEnd).seconds
+    }
+}
 
 private fun ObjectSet<PlaytimeSession>.sumByCategory(category: String) =
     this
