@@ -6,7 +6,7 @@ import java.nio.file.Path
 class PaperLoader(
     dataPath: Path
 ) {
-    val rabbitApi = ClientRabbitMQApi.create(1, "surf-playtime", dataPath)
+    val rabbitApi = ClientRabbitMQApi.create("surf-playtime", dataPath)
 
     @Suppress("UnusedExpression")
     suspend fun onLoad() {

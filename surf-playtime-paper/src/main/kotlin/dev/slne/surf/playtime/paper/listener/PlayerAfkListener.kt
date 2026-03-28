@@ -1,7 +1,7 @@
 package dev.slne.surf.playtime.paper.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.api.paper.event.AfkStateChangeEvent
 import dev.slne.surf.playtime.core.common.service.AfkService
@@ -84,8 +84,8 @@ object PlayerAfkListener : Listener {
                     PlaytimeSession(
                         uuid,
                         UUID.randomUUID(),
-                        surfCoreApi.getCurrentServerDisplayName(),
-                        surfCoreApi.getCurrentServerCategory(),
+                        SurfCoreApi.getCurrentServerDisplayName(),
+                        SurfCoreApi.getCurrentServerCategory(),
                         now,
                         now
                     )

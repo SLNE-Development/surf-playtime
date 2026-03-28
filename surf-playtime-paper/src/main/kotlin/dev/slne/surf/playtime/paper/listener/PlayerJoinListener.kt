@@ -1,7 +1,7 @@
 package dev.slne.surf.playtime.paper.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.common.service.AfkService
 import dev.slne.surf.playtime.core.common.service.payCheckService
@@ -22,8 +22,8 @@ object PlayerJoinListener : Listener {
             PlaytimeSession(
                 event.player.uniqueId,
                 UUID.randomUUID(),
-                surfCoreApi.getCurrentServerDisplayName(),
-                surfCoreApi.getCurrentServerCategory(),
+                SurfCoreApi.getCurrentServerDisplayName(),
+                SurfCoreApi.getCurrentServerCategory(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
             )
