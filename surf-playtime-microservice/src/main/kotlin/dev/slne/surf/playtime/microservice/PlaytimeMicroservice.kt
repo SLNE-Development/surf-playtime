@@ -14,6 +14,7 @@ import kotlin.io.path.Path
 class PlaytimeMicroservice : Microservice() {
     private val databaseApi = DatabaseApi.create(Path("config"))
     private val rabbitApi = ServerRabbitMQApi.create("surf-playtime", Path("config"))
+    override val dataPath = Path("config")
 
     override suspend fun onBootstrap(args: List<String>) {
         suspendTransaction {
