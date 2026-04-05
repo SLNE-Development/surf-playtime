@@ -96,7 +96,7 @@ jobs:
           name: Release ${{ env.VERSION }}
           draft: false
           prerelease: ${{ env.PRERELEASE }}
-          make_latest: ${{ env.MAKE_LATEST }}
+          make_latest: true
           files: ${{ env.JAR_FILES }}
           generate_release_notes: true
         env:
