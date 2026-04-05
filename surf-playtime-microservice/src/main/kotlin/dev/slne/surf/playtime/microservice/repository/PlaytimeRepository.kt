@@ -1,5 +1,6 @@
 package dev.slne.surf.playtime.microservice.repository
 
+import dev.slne.surf.api.core.util.toObjectSet
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.*
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.select
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
@@ -7,7 +8,6 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.s
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.microservice.table.PlaytimeSessionsTable
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -15,9 +15,7 @@ import kotlinx.coroutines.flow.toSet
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-val playtimeRepository = PlaytimeRepository()
-
-class PlaytimeRepository {
+object PlaytimeRepository {
     suspend fun saveSession(session: PlaytimeSession) = suspendTransaction {
         if (session.startTime.until(session.endTime, ChronoUnit.MINUTES) < 1) {
             return@suspendTransaction false
@@ -46,11 +44,7 @@ class PlaytimeRepository {
                     startTime = row[PlaytimeSessionsTable.startTime],
                     endTime = row[PlaytimeSessionsTable.endTime],
                 )
-            }.let { sessions ->
-                val set = mutableObjectSetOf<PlaytimeSession>()
-                set.addAll(sessions.toSet())
-                set
-            }
+            }.toSet().toObjectSet()
     }
 
     suspend fun loadSessionsByServer(
@@ -68,11 +62,7 @@ class PlaytimeRepository {
                     startTime = row[PlaytimeSessionsTable.startTime],
                     endTime = row[PlaytimeSessionsTable.endTime],
                 )
-            }.let { sessions ->
-                val set = mutableObjectSetOf<PlaytimeSession>()
-                set.addAll(sessions.toSet())
-                set
-            }
+            }.toSet().toObjectSet()
     }
 
     suspend fun loadPlaytimeSecondsByServer(
@@ -120,10 +110,6 @@ class PlaytimeRepository {
                     startTime = row[PlaytimeSessionsTable.startTime],
                     endTime = row[PlaytimeSessionsTable.endTime],
                 )
-            }.let { sessions ->
-                val set = mutableObjectSetOf<PlaytimeSession>()
-                set.addAll(sessions.toSet())
-                set
-            }
+            }.toSet().toObjectSet()
     }
 }

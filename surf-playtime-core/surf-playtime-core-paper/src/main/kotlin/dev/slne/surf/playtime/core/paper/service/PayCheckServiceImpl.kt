@@ -1,13 +1,13 @@
 package dev.slne.surf.playtime.core.paper.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.api.core.util.mutableObject2ObjectMapOf
 import dev.slne.surf.core.api.common.server.SurfServer
 import dev.slne.surf.playtime.core.common.bridge.transactionBridge
 import dev.slne.surf.playtime.core.common.config.PlaytimeConfig
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadSecondsByPlayerUuidAndServerNameRequestPacket
 import dev.slne.surf.playtime.core.common.service.PayCheckService
 import dev.slne.surf.playtime.core.paper.PaperPlaytimeInstance
-import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import java.util.*
 
 @AutoService(PayCheckService::class)
@@ -41,12 +41,12 @@ class PayCheckServiceImpl : PayCheckService {
 
 
     override suspend fun cachePlaytime(playerUuid: UUID) {
-        currentServerPlaytime[playerUuid] = PaperPlaytimeInstance.paperLoader.rabbitApi.sendRequest(
+        currentServerPlaytime[playerUuid] = PaperPlaytimeInstance.rabbitApi.sendRequest(
             LoadSecondsByPlayerUuidAndServerNameRequestPacket(
                 playerUuid,
                 SurfServer.current().displayName
             )
-        ).result
+        ).value
     }
 
     override fun invalidateCache(playerUuid: UUID) {

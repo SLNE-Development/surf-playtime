@@ -1,6 +1,7 @@
 package dev.slne.surf.playtime.core.paper.service
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.api.core.util.toObjectSet
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadSessionsByPlayerUuidAndServerCategoryRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadSessionsByPlayerUuidAndServerNameRequestPacket
@@ -8,7 +9,6 @@ import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadSessionsByPl
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.SaveSessionRequestPacket
 import dev.slne.surf.playtime.core.common.service.PlaytimeService
 import dev.slne.surf.playtime.core.paper.PaperPlaytimeInstance
-import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import io.ktor.util.collections.*
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*

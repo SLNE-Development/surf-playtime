@@ -1,13 +1,13 @@
 package dev.slne.surf.playtime.paper.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.api.paper.event.AfkStateChangeEvent
 import dev.slne.surf.playtime.core.common.service.AfkService
-import dev.slne.surf.playtime.core.common.service.playtimeService
+import dev.slne.surf.playtime.core.common.service.PlaytimeService
 import dev.slne.surf.playtime.paper.plugin
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -65,7 +65,7 @@ object PlayerAfkListener : Listener {
 
         val now = LocalDateTime.now()
 
-        val activeSession = playtimeService.activePlaytimeSessions
+        val activeSession = PlaytimeService.activePlaytimeSessions
             .find { it.playerUuid == uuid }
 
         if (isAfk) {
@@ -73,19 +73,19 @@ object PlayerAfkListener : Listener {
                 activeSession.endTime = now
 
                 plugin.launch {
-                    playtimeService.saveSession(activeSession)
+                    PlaytimeService.saveSession(activeSession)
                 }
 
-                playtimeService.removeCachedSession(activeSession.sessionId)
+                PlaytimeService.removeCachedSession(activeSession.sessionId)
             }
         } else {
             if (activeSession == null) {
-                playtimeService.cacheSession(
+                PlaytimeService.cacheSession(
                     PlaytimeSession(
                         uuid,
                         UUID.randomUUID(),
-                        surfCoreApi.getCurrentServerDisplayName(),
-                        surfCoreApi.getCurrentServerCategory(),
+                        SurfCoreApi.getCurrentServerDisplayName(),
+                        SurfCoreApi.getCurrentServerCategory(),
                         now,
                         now
                     )

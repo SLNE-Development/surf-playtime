@@ -1,13 +1,13 @@
 package dev.slne.surf.playtime.core.common.service
 
+import dev.slne.surf.api.core.util.mutableObjectSetOf
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.time.LocalDateTime
 import java.util.*
 
-val playtimeService = requiredService<PlaytimeService>()
+private val service = requiredService<PlaytimeService>()
 
 interface PlaytimeService {
     val activePlaytimeSessions: Set<PlaytimeSession>
@@ -58,8 +58,10 @@ interface PlaytimeService {
             it.endTime = now
 
             if (!AfkService.isAfk(it.playerUuid)) {
-                payCheckService.increasePlaytime(it.playerUuid, 1)
+                PayCheckService.increasePlaytime(it.playerUuid, 1)
             }
         }
     }
+
+    companion object : PlaytimeService by service
 }

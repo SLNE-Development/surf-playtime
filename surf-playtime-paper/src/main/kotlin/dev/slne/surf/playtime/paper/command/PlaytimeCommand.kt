@@ -4,12 +4,12 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.kotlindsl.commandTree
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
-import dev.slne.surf.playtime.core.common.service.playtimeService
+import dev.slne.surf.playtime.core.common.service.PlaytimeService
 import dev.slne.surf.playtime.paper.plugin
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Deferred
 
@@ -19,7 +19,7 @@ fun playtimeCommand() = commandTree("playtime") {
 
     playerExecutor { player, _ ->
         plugin.launch {
-            val playtime = playtimeService.getAndLoadSessions(player.uniqueId)
+            val playtime = PlaytimeService.getAndLoadSessions(player.uniqueId)
             val summedPlaytime = playtime.sumPlaytime()
 
             player.sendText {
@@ -74,7 +74,7 @@ fun playtimeCommand() = commandTree("playtime") {
                     return@launch
                 }
 
-                val playtime = playtimeService.getAndLoadSessions(targetPlayer.uuid)
+                val playtime = PlaytimeService.getAndLoadSessions(targetPlayer.uuid)
                 val summedPlaytime = playtime.sumPlaytime()
 
                 sender.sendText {

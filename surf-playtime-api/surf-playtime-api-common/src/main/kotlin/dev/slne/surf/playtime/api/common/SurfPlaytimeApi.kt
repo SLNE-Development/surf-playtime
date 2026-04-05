@@ -1,7 +1,7 @@
 package dev.slne.surf.playtime.api.common
 
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 

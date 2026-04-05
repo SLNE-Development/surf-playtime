@@ -1,9 +1,9 @@
 package dev.slne.surf.playtime.paper.config
 
+import dev.slne.surf.api.core.config.manager.SpongeConfigManager
+import dev.slne.surf.api.core.config.surfConfigApi
 import dev.slne.surf.playtime.core.common.config.PlaytimeConfig
 import dev.slne.surf.playtime.paper.plugin
-import dev.slne.surf.surfapi.core.api.config.manager.SpongeConfigManager
-import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 
 class PlaytimeConfigManager {
     private val configManager: SpongeConfigManager<PlaytimeConfig>

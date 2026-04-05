@@ -4,7 +4,7 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.playtime.api.common.SurfPlaytimeApi
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.common.service.AfkService
-import dev.slne.surf.playtime.core.common.service.playtimeService
+import dev.slne.surf.playtime.core.common.service.PlaytimeService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
 import java.util.*
@@ -12,7 +12,7 @@ import java.util.*
 @AutoService(SurfPlaytimeApi::class)
 class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
     override fun getCurrentPlaytimeSession(playerUuid: UUID): PlaytimeSession? =
-        playtimeService.activePlaytimeSessions.find { it.playerUuid == playerUuid }
+        PlaytimeService.activePlaytimeSessions.find { it.playerUuid == playerUuid }
 
     override fun isPlayerAfk(playerUuid: UUID): Boolean = AfkService.isAfk(playerUuid)
 
@@ -21,7 +21,7 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
         server: String
     ): Long {
         val stored =
-            playtimeService.loadSessionsByServer(playerUuid, server)
+            PlaytimeService.loadSessionsByServer(playerUuid, server)
                 .sumOf { it.durationSeconds }
 
         val current =
@@ -38,7 +38,7 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
         category: String
     ): Long {
         val stored =
-            playtimeService.loadSessionsByCategory(playerUuid, category)
+            PlaytimeService.loadSessionsByCategory(playerUuid, category)
                 .sumOf { it.durationSeconds }
 
         val current =
@@ -50,8 +50,8 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
     }
 
     override suspend fun getTotalPlaytime(playerUuid: UUID) =
-        playtimeService.getAndLoadSessions(playerUuid).sumOf { it.durationSeconds }
+        PlaytimeService.getAndLoadSessions(playerUuid).sumOf { it.durationSeconds }
 
     override suspend fun getAllPlaytimeSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> =
-        playtimeService.getAndLoadSessions(playerUuid)
+        PlaytimeService.getAndLoadSessions(playerUuid)
 }

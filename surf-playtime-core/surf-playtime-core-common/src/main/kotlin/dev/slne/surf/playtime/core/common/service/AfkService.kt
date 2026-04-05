@@ -1,10 +1,10 @@
 package dev.slne.surf.playtime.core.common.service
 
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object AfkService {
-    val afkPlayers = mutableObjectSetOf<UUID>()
+    private val afkPlayers = ConcurrentHashMap.newKeySet<UUID>()
 
     fun changeState(uuid: UUID, afk: Boolean): Boolean {
         return if (afk) {

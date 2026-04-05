@@ -1,23 +1,28 @@
 package dev.slne.surf.playtime.microservice.handler
 
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.*
-import dev.slne.surf.playtime.core.common.rabbit.packet.response.BooleanResponsePacket
-import dev.slne.surf.playtime.core.common.rabbit.packet.response.LongResponsePacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.response.ManySessionsResponsePacket
-import dev.slne.surf.playtime.microservice.repository.playtimeRepository
+import dev.slne.surf.playtime.microservice.repository.PlaytimeRepository
 import dev.slne.surf.rabbitmq.api.handler.RabbitHandler
+import dev.slne.surf.rabbitmq.api.packet.standard.response.primitive.PrimitiveResponse
 import kotlinx.coroutines.launch
 
 object PlaytimeSessionHandler {
     @RabbitHandler
     fun handleSaveSessionRequest(request: SaveSessionRequestPacket) = request.launch {
-        request.respond(BooleanResponsePacket(playtimeRepository.saveSession(request.session)))
+        request.respond(
+            PrimitiveResponse.BooleanResponsePacket(
+                PlaytimeRepository.saveSession(
+                    request.session
+                )
+            )
+        )
     }
 
     @RabbitHandler
     fun handleLoadSessionsByPlayerUuidRequest(request: LoadSessionsByPlayerUuidRequestPacket) =
         request.launch {
-            request.respond(ManySessionsResponsePacket(playtimeRepository.loadSessions(request.playerUuid)))
+            request.respond(ManySessionsResponsePacket(PlaytimeRepository.loadSessions(request.playerUuid)))
         }
 
     @RabbitHandler
@@ -25,7 +30,7 @@ object PlaytimeSessionHandler {
         request.launch {
             request.respond(
                 ManySessionsResponsePacket(
-                    playtimeRepository.loadSessionsByServer(
+                    PlaytimeRepository.loadSessionsByServer(
                         request.playerUuid,
                         request.serverName
                     )
@@ -38,7 +43,7 @@ object PlaytimeSessionHandler {
         request.launch {
             request.respond(
                 ManySessionsResponsePacket(
-                    playtimeRepository.loadSessionsByCategory(
+                    PlaytimeRepository.loadSessionsByCategory(
                         request.playerUuid,
                         request.serverCategory
                     )
@@ -50,13 +55,12 @@ object PlaytimeSessionHandler {
     fun handleLoadSecondsByServerName(request: LoadSecondsByPlayerUuidAndServerNameRequestPacket) =
         request.launch {
             request.respond(
-                LongResponsePacket(
-                    playtimeRepository.loadPlaytimeSecondsByServer(
+                PrimitiveResponse.LongResponsePacket(
+                    PlaytimeRepository.loadPlaytimeSecondsByServer(
                         request.playerUuid,
                         request.serverName
                     )
                 )
             )
         }
-
 }

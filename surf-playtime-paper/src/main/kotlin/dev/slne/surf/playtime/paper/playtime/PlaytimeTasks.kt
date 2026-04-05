@@ -1,7 +1,7 @@
 package dev.slne.surf.playtime.paper.playtime
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.playtime.core.common.service.playtimeService
+import dev.slne.surf.playtime.core.common.service.PlaytimeService
 import dev.slne.surf.playtime.paper.plugin
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask
 import org.bukkit.Bukkit
@@ -25,7 +25,7 @@ class PlaytimeTasks {
 
     private fun playTimeTask() = Bukkit.getAsyncScheduler().runAtFixedRate(plugin, {
         plugin.launch {
-            playtimeService.updateAllActiveSessions()
+            PlaytimeService.updateAllActiveSessions()
         }
 
 
@@ -33,7 +33,7 @@ class PlaytimeTasks {
 
     private fun flushAllTask() = Bukkit.getAsyncScheduler().runAtFixedRate(plugin, {
         plugin.launch {
-            playtimeService.flushAll()
+            PlaytimeService.flushAll()
         }
     }, 0L, 5L, TimeUnit.MINUTES)
 }

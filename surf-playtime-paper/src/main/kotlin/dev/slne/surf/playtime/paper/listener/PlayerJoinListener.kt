@@ -1,11 +1,11 @@
 package dev.slne.surf.playtime.paper.listener
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.common.service.AfkService
-import dev.slne.surf.playtime.core.common.service.payCheckService
-import dev.slne.surf.playtime.core.common.service.playtimeService
+import dev.slne.surf.playtime.core.common.service.PayCheckService
+import dev.slne.surf.playtime.core.common.service.PlaytimeService
 import dev.slne.surf.playtime.paper.plugin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -18,19 +18,19 @@ object PlayerJoinListener : Listener {
     fun onJoin(event: PlayerJoinEvent) {
         AfkService.changeState(event.player.uniqueId, false)
 
-        playtimeService.cacheSession(
+        PlaytimeService.cacheSession(
             PlaytimeSession(
                 event.player.uniqueId,
                 UUID.randomUUID(),
-                surfCoreApi.getCurrentServerDisplayName(),
-                surfCoreApi.getCurrentServerCategory(),
+                SurfCoreApi.getCurrentServerDisplayName(),
+                SurfCoreApi.getCurrentServerCategory(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
             )
         )
 
         plugin.launch {
-            payCheckService.cachePlaytime(event.player.uniqueId)
+            PayCheckService.cachePlaytime(event.player.uniqueId)
         }
     }
 }

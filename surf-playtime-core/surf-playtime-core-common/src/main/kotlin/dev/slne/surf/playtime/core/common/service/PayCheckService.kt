@@ -1,10 +1,10 @@
 package dev.slne.surf.playtime.core.common.service
 
+import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.playtime.core.common.config.PlaytimeConfig
-import dev.slne.surf.surfapi.core.api.util.requiredService
 import java.util.*
 
-val payCheckService = requiredService<PayCheckService>()
+private val service = requiredService<PayCheckService>()
 
 interface PayCheckService {
     fun create(config: PlaytimeConfig)
@@ -15,4 +15,6 @@ interface PayCheckService {
     suspend fun handleUpdate(playerUuid: UUID, newPlaytime: Long)
     suspend fun cachePlaytime(playerUuid: UUID)
     fun invalidateCache(playerUuid: UUID)
+
+    companion object : PayCheckService by service
 }
