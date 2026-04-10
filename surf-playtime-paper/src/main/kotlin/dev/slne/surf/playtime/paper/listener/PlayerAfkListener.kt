@@ -78,10 +78,10 @@ object PlayerAfkListener : Listener {
                 }
             }
         } else {
-            val activeSession = PlaytimeService.activePlaytimeSessions
-                .find { it.playerUuid == uuid }
+            val activeSessions = PlaytimeService.activePlaytimeSessions
+                .filter { it.playerUuid == uuid }
 
-            if (activeSession == null) {
+            if (activeSessions.isEmpty()) {
                 PlaytimeService.cacheSession(
                     PlaytimeSession(
                         uuid,
@@ -92,6 +92,16 @@ object PlayerAfkListener : Listener {
                         now
                     )
                 )
+            } else if (activeSessions.size > 1) {
+                // Clean up unexpected duplicate sessions, keep only the most recent one
+                val sorted = activeSessions.sortedByDescending { it.startTime }
+                sorted.drop(1).forEach { duplicate ->
+                    PlaytimeService.removeCachedSession(duplicate.sessionId)
+
+                    plugin.launch {
+                        PlaytimeService.saveSession(duplicate.apply { endTime = now })
+                    }
+                }
             }
         }
 
