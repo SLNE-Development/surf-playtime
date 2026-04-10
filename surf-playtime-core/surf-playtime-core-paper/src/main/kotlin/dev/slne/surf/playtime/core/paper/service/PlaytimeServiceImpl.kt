@@ -19,7 +19,6 @@ class PlaytimeServiceImpl : PlaytimeService {
 
     override val activePlaytimeSessions get() = _sessions.values.toSet()
     override suspend fun saveSession(session: PlaytimeSession) {
-        cacheSession(session)
         PaperPlaytimeInstance.rabbitApi.sendRequest(SaveSessionRequestPacket(session))
     }
 

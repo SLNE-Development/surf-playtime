@@ -20,14 +20,21 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
         playerUuid: UUID,
         server: String
     ): Long {
+        val currentSession = getCurrentPlaytimeSession(playerUuid)
+            ?.takeIf { it.server == server }
+
         val stored =
             PlaytimeService.loadSessionsByServer(playerUuid, server)
+                .let { sessions ->
+                    if (currentSession != null) {
+                        sessions.filterNot { it.sessionId == currentSession.sessionId }
+                    } else {
+                        sessions
+                    }
+                }
                 .sumOf { it.durationSeconds }
 
-        val current =
-            getCurrentPlaytimeSession(playerUuid)
-                ?.takeIf { it.server == server }
-                ?.durationSeconds ?: 0
+        val current = currentSession?.durationSeconds ?: 0
 
         return stored + current
     }
@@ -37,14 +44,21 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
         playerUuid: UUID,
         category: String
     ): Long {
+        val currentSession = getCurrentPlaytimeSession(playerUuid)
+            ?.takeIf { it.category == category }
+
         val stored =
             PlaytimeService.loadSessionsByCategory(playerUuid, category)
+                .let { sessions ->
+                    if (currentSession != null) {
+                        sessions.filterNot { it.sessionId == currentSession.sessionId }
+                    } else {
+                        sessions
+                    }
+                }
                 .sumOf { it.durationSeconds }
 
-        val current =
-            getCurrentPlaytimeSession(playerUuid)
-                ?.takeIf { it.category == category }
-                ?.durationSeconds ?: 0
+        val current = currentSession?.durationSeconds ?: 0
 
         return stored + current
     }

@@ -65,20 +65,22 @@ object PlayerAfkListener : Listener {
 
         val now = LocalDateTime.now()
 
-        val activeSession = PlaytimeService.activePlaytimeSessions
-            .find { it.playerUuid == uuid }
-
         if (isAfk) {
-            if (activeSession != null) {
-                activeSession.endTime = now
+            val activeSessions = PlaytimeService.activePlaytimeSessions
+                .filter { it.playerUuid == uuid }
+
+            activeSessions.forEach { session ->
+                session.endTime = now
+                PlaytimeService.removeCachedSession(session.sessionId)
 
                 plugin.launch {
-                    PlaytimeService.saveSession(activeSession)
+                    PlaytimeService.saveSession(session)
                 }
-
-                PlaytimeService.removeCachedSession(activeSession.sessionId)
             }
         } else {
+            val activeSession = PlaytimeService.activePlaytimeSessions
+                .find { it.playerUuid == uuid }
+
             if (activeSession == null) {
                 PlaytimeService.cacheSession(
                     PlaytimeSession(
