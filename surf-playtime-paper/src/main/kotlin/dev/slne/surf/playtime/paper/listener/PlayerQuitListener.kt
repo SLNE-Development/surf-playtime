@@ -16,14 +16,15 @@ object PlayerQuitListener : Listener {
         AfkService.changeState(event.player.uniqueId, false)
         PayCheckService.invalidateCache(event.player.uniqueId)
         plugin.launch {
-            val session =
-                PlaytimeService.activePlaytimeSessions.find { it.playerUuid == event.player.uniqueId }
-                    ?: return@launch
+            val sessions =
+                PlaytimeService.activePlaytimeSessions.filter { it.playerUuid == event.player.uniqueId }
 
-            PlaytimeService.saveSession(session.apply {
-                endTime = LocalDateTime.now()
-            })
-            PlaytimeService.removeCachedSession(session.sessionId)
+            val now = LocalDateTime.now()
+            sessions.forEach { session ->
+                session.endTime = now
+                PlaytimeService.saveSession(session)
+                PlaytimeService.removeCachedSession(session.sessionId)
+            }
         }
     }
 }
