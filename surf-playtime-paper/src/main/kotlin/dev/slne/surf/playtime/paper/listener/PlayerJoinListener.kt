@@ -65,14 +65,8 @@ object PlayerJoinListener : Listener {
 
             val newStreak = when {
                 lastLogin == null -> 1
-
-                lastLogin.isEqual(today) -> {
-                    return@launch
-                }
-
-                lastLogin.plusDays(1).isEqual(today) ->
-                    streak.currentLoginStreak + 1
-
+                lastLogin.isEqual(today) -> streak.currentLoginStreak
+                lastLogin.plusDays(1).isEqual(today) -> streak.currentLoginStreak + 1
                 else -> 1
             }
 

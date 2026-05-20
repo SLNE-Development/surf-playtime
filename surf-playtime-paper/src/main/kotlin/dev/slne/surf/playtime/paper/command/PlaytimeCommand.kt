@@ -35,6 +35,8 @@ fun playtimeCommand() = commandTree("playtime") {
                     variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                 }
 
+                println("CACHED: ${PlaytimeStreakService.getStreak(player.uniqueId)}")
+
                 val (current, max) =
                     PlaytimeStreakService.getStreak(player.uniqueId)
                         ?.let { it.currentLoginStreak to it.longestLoginStreak }
@@ -44,7 +46,12 @@ fun playtimeCommand() = commandTree("playtime") {
                     appendNewline().appendInfoPrefix()
                     variableKey("Login-Streak")
                     spacer(": ")
-                    variableValue(if (current > 0) "$current Tage (Max: $max Tage)" else "Keine Streak")
+                    if (current > 0) {
+                        variableValue("$current Tage")
+                    } else {
+                        variableValue("Keine Streak")
+                    }
+                    variableValue(" (Best: $max Tage)")
                 }
                 appendNewline().appendInfoPrefix()
                 for ((group, groupServer) in summedPlaytime) {
