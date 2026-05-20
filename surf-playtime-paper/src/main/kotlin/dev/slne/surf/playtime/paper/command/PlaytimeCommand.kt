@@ -9,6 +9,7 @@ import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.common.service.PlaytimeService
+import dev.slne.surf.playtime.core.common.service.PlaytimeStreakService
 import dev.slne.surf.playtime.paper.plugin
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Deferred
@@ -32,6 +33,18 @@ fun playtimeCommand() = commandTree("playtime") {
                     variableKey("Gesamt")
                     spacer(": ")
                     variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
+                }
+
+                val (current, max) =
+                    PlaytimeStreakService.getStreak(player.uniqueId)
+                        ?.let { it.currentLoginStreak to it.longestLoginStreak }
+                        ?: (0 to 0)
+
+                append {
+                    appendNewline().appendInfoPrefix()
+                    variableKey("Login-Streak")
+                    spacer(": ")
+                    variableValue(if (current > 0) "$current Tage (Max: $max Tage)" else "Keine Streak")
                 }
                 appendNewline().appendInfoPrefix()
                 for ((group, groupServer) in summedPlaytime) {
