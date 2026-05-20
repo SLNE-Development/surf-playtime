@@ -35,8 +35,6 @@ fun playtimeCommand() = commandTree("playtime") {
                     variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
                 }
 
-                println("CACHED: ${PlaytimeStreakService.getStreak(player.uniqueId)}")
-
                 val (current, max) =
                     PlaytimeStreakService.getStreak(player.uniqueId)
                         ?.let { it.currentLoginStreak to it.longestLoginStreak }
