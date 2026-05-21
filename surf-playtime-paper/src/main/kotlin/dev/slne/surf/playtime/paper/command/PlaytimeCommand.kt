@@ -94,6 +94,7 @@ fun playtimeCommand() = commandTree("playtime") {
 
                 val playtime = PlaytimeService.getAndLoadSessions(targetPlayer.uuid)
                 val summedPlaytime = playtime.sumPlaytime()
+                val streak = PlaytimeStreakService.loadOrCalculateStreak(targetPlayer.uuid)
 
                 sender.sendText {
                     appendNewline()
@@ -106,6 +107,19 @@ fun playtimeCommand() = commandTree("playtime") {
                         variableKey("Gesamt")
                         spacer(": ")
                         variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
+                    }
+                    val (current, max) = streak.let { it.currentLoginStreak to it.longestLoginStreak }
+
+                    append {
+                        appendNewline().appendInfoPrefix()
+                        variableKey("Login-Streak")
+                        spacer(": ")
+                        if (current > 0) {
+                            variableValue("$current Tage")
+                        } else {
+                            variableValue("Keine Streak")
+                        }
+                        variableValue(" (Best: $max Tage)")
                     }
                     appendNewline().appendInfoPrefix()
                     for ((group, groupServer) in summedPlaytime) {
