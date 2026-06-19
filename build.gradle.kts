@@ -1,5 +1,3 @@
-import dev.slne.surf.api.gradle.util.slneReleases
-
 allprojects {
     version = findProperty("version") as String
     group = "dev.slne.surf.playtime"
@@ -13,17 +11,5 @@ buildscript {
     dependencies {
         classpath("dev.slne.surf.api:surf-api-gradle-plugin:+")
         classpath("dev.slne.surf.microservice:surf-microservice-gradle-plugin:+")
-    }
-}
-
-subprojects {
-    afterEvaluate {
-        plugins.withType<PublishingPlugin> {
-            configure<PublishingExtension> {
-                repositories {
-                    slneReleases()
-                }
-            }
-        }
     }
 }
