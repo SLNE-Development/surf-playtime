@@ -6,7 +6,9 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.SchemaUtils
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.microservice.api.microservice.Microservice
 import dev.slne.surf.playtime.microservice.handler.PlaytimeSessionHandler
+import dev.slne.surf.playtime.microservice.handler.PlaytimeStreakHandler
 import dev.slne.surf.playtime.microservice.table.PlaytimeSessionsTable
+import dev.slne.surf.playtime.microservice.table.PlaytimeStreaksTable
 import dev.slne.surf.rabbitmq.api.ServerRabbitMQApi
 import kotlin.io.path.Path
 
@@ -19,11 +21,13 @@ class PlaytimeMicroservice : Microservice() {
     override suspend fun onBootstrap(args: List<String>) {
         suspendTransaction {
             SchemaUtils.create(
-                PlaytimeSessionsTable
+                PlaytimeSessionsTable,
+                PlaytimeStreaksTable
             )
         }
 
         rabbitApi.registerRequestHandler(PlaytimeSessionHandler)
+        rabbitApi.registerRequestHandler(PlaytimeStreakHandler)
         rabbitApi.freezeAndConnect()
     }
 

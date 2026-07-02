@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.playtime.core.common.service.AfkService
 import dev.slne.surf.playtime.core.common.service.PayCheckService
 import dev.slne.surf.playtime.core.common.service.PlaytimeService
+import dev.slne.surf.playtime.core.common.service.PlaytimeStreakService
 import dev.slne.surf.playtime.paper.plugin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,6 +16,7 @@ object PlayerQuitListener : Listener {
     fun onQuit(event: PlayerQuitEvent) {
         AfkService.changeState(event.player.uniqueId, false)
         PayCheckService.invalidateCache(event.player.uniqueId)
+        PlaytimeStreakService.invalidateCache(event.player.uniqueId)
         plugin.launch {
             val sessions =
                 PlaytimeService.activePlaytimeSessions.filter { it.playerUuid == event.player.uniqueId }

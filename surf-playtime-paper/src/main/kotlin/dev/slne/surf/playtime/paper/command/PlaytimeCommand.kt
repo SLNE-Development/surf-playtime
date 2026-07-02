@@ -9,6 +9,7 @@ import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.common.service.PlaytimeService
+import dev.slne.surf.playtime.core.common.service.PlaytimeStreakService
 import dev.slne.surf.playtime.paper.plugin
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.Deferred
@@ -32,6 +33,23 @@ fun playtimeCommand() = commandTree("playtime") {
                     variableKey("Gesamt")
                     spacer(": ")
                     variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
+                }
+
+                val (current, max) =
+                    PlaytimeStreakService.getStreak(player.uniqueId)
+                        ?.let { it.currentLoginStreak to it.longestLoginStreak }
+                        ?: (0 to 0)
+
+                append {
+                    appendNewline().appendInfoPrefix()
+                    variableKey("Login-Streak")
+                    spacer(": ")
+                    if (current > 0) {
+                        variableValue("$current Tage")
+                    } else {
+                        variableValue("Keine Streak")
+                    }
+                    variableValue(" (Best: $max Tage)")
                 }
                 appendNewline().appendInfoPrefix()
                 for ((group, groupServer) in summedPlaytime) {
@@ -76,6 +94,7 @@ fun playtimeCommand() = commandTree("playtime") {
 
                 val playtime = PlaytimeService.getAndLoadSessions(targetPlayer.uuid)
                 val summedPlaytime = playtime.sumPlaytime()
+                val streak = PlaytimeStreakService.loadOrCalculateStreak(targetPlayer.uuid)
 
                 sender.sendText {
                     appendNewline()
@@ -88,6 +107,19 @@ fun playtimeCommand() = commandTree("playtime") {
                         variableKey("Gesamt")
                         spacer(": ")
                         variableValue(playtime.sumOf { it.durationSeconds }.formatSeconds())
+                    }
+                    val (current, max) = streak.let { it.currentLoginStreak to it.longestLoginStreak }
+
+                    append {
+                        appendNewline().appendInfoPrefix()
+                        variableKey("Login-Streak")
+                        spacer(": ")
+                        if (current > 0) {
+                            variableValue("$current Tage")
+                        } else {
+                            variableValue("Keine Streak")
+                        }
+                        variableValue(" (Best: $max Tage)")
                     }
                     appendNewline().appendInfoPrefix()
                     for ((group, groupServer) in summedPlaytime) {
