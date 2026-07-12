@@ -67,6 +67,7 @@ object PlayerJoinListener : Listener {
                 lastLogin == null -> 1
                 lastLogin.isEqual(today) -> streak.currentLoginStreak
                 lastLogin.plusDays(1).isEqual(today) -> streak.currentLoginStreak + 1
+                isGapBridgedByPauses(lastLogin, today) -> streak.currentLoginStreak + 1
                 else -> 1
             }
 
@@ -80,5 +81,26 @@ object PlayerJoinListener : Listener {
             PlaytimeStreakService.cacheStreak(uuid, cached)
             PlaytimeStreakService.savePlaytimeStreak(uuid, newStreak, today)
         }
+    }
+
+    /**
+     * Checks whether every day strictly between [lastLogin] and [today] is covered by a
+     * streak pause, so the streak survives e.g. maintenance downtimes.
+     */
+    private suspend fun isGapBridgedByPauses(lastLogin: LocalDate, today: LocalDate): Boolean {
+        val pauses = PlaytimeStreakService.loadStreakPauses()
+        if (pauses.isEmpty()) {
+            return false
+        }
+
+        var day = lastLogin.plusDays(1)
+        while (day.isBefore(today)) {
+            if (pauses.none { day in it }) {
+                return false
+            }
+            day = day.plusDays(1)
+        }
+
+        return true
     }
 }

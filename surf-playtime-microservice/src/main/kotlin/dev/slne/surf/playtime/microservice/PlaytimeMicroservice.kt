@@ -7,7 +7,9 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.s
 import dev.slne.surf.microservice.api.microservice.Microservice
 import dev.slne.surf.playtime.microservice.handler.PlaytimeSessionHandler
 import dev.slne.surf.playtime.microservice.handler.PlaytimeStreakHandler
+import dev.slne.surf.playtime.microservice.handler.PlaytimeStreakPauseHandler
 import dev.slne.surf.playtime.microservice.table.PlaytimeSessionsTable
+import dev.slne.surf.playtime.microservice.table.PlaytimeStreakPausesTable
 import dev.slne.surf.playtime.microservice.table.PlaytimeStreaksTable
 import dev.slne.surf.rabbitmq.api.ServerRabbitMQApi
 import kotlin.io.path.Path
@@ -22,12 +24,14 @@ class PlaytimeMicroservice : Microservice() {
         suspendTransaction {
             SchemaUtils.create(
                 PlaytimeSessionsTable,
-                PlaytimeStreaksTable
+                PlaytimeStreaksTable,
+                PlaytimeStreakPausesTable
             )
         }
 
         rabbitApi.registerRequestHandler(PlaytimeSessionHandler)
         rabbitApi.registerRequestHandler(PlaytimeStreakHandler)
+        rabbitApi.registerRequestHandler(PlaytimeStreakPauseHandler)
         rabbitApi.freezeAndConnect()
     }
 

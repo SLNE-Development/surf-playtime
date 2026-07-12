@@ -2,6 +2,8 @@ package dev.slne.surf.playtime.microservice.handler
 
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.CalculatePlaytimeStreakRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadPlaytimeStreakRequestPacket
+import dev.slne.surf.playtime.core.common.rabbit.packet.request.RecalculateAllPlaytimeStreaksRequestPacket
+import dev.slne.surf.playtime.core.common.rabbit.packet.request.RecalculatePlaytimeStreakRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.SavePlaytimeStreakRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.response.IntResponsePacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.response.PlaytimeStreakResponsePacket
@@ -31,5 +33,21 @@ object PlaytimeStreakHandler {
     fun handleCalculateStreakRequest(request: CalculatePlaytimeStreakRequestPacket) =
         request.launch {
             request.respond(IntResponsePacket(PlaytimeStreakRepository.calculateStreak(request.playerUuid)))
+        }
+
+    @RabbitHandler
+    fun handleRecalculateStreakRequest(request: RecalculatePlaytimeStreakRequestPacket) =
+        request.launch {
+            request.respond(
+                PlaytimeStreakResponsePacket(
+                    PlaytimeStreakRepository.recalculateStreak(request.playerUuid)
+                )
+            )
+        }
+
+    @RabbitHandler
+    fun handleRecalculateAllStreaksRequest(request: RecalculateAllPlaytimeStreaksRequestPacket) =
+        request.launch {
+            request.respond(IntResponsePacket(PlaytimeStreakRepository.recalculateAllStreaks()))
         }
 }
