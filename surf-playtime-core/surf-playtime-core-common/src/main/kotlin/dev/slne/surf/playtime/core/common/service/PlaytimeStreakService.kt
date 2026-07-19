@@ -2,6 +2,7 @@ package dev.slne.surf.playtime.core.common.service
 
 import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.playtime.api.common.session.PlaytimeStreak
+import dev.slne.surf.playtime.api.common.session.PlaytimeStreakPause
 import java.time.LocalDate
 import java.util.*
 
@@ -11,6 +12,12 @@ interface PlaytimeStreakService {
     suspend fun loadPlaytimeStreak(playerUuid: UUID): PlaytimeStreak?
     suspend fun savePlaytimeStreak(playerUuid: UUID, streak: Int, localDate: LocalDate): Boolean
     suspend fun calculatePlaytimeStreak(playerUuid: UUID): Int
+    suspend fun recalculatePlaytimeStreak(playerUuid: UUID): PlaytimeStreak?
+    suspend fun recalculateAllPlaytimeStreaks(): Int
+
+    suspend fun loadStreakPauses(): List<PlaytimeStreakPause>
+    suspend fun createStreakPause(startDate: LocalDate, endDate: LocalDate): PlaytimeStreakPause
+    suspend fun deleteStreakPause(pauseId: Long): Boolean
 
     suspend fun loadOrCalculateStreak(playerUuid: UUID): PlaytimeStreak.SimpleStreak {
         val cached = getStreak(playerUuid)
