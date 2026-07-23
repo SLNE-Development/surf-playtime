@@ -39,7 +39,7 @@ object PlaytimeStreakRepository {
         val currentHighest = existing?.get(PlaytimeStreaksTable.highestLoginStreak) ?: 0
         val newHighest = maxOf(currentHighest, streak)
 
-        PlaytimeStreaksTable.upsert {
+        PlaytimeStreaksTable.upsert(PlaytimeStreaksTable.playerUuid) {
             it[this.playerUuid] = playerUuid
             it[currentLoginStreak] = streak
             it[highestLoginStreak] = newHighest
@@ -79,7 +79,7 @@ object PlaytimeStreakRepository {
             ?: 0
         val newHighest = maxOf(currentHighest, streak)
 
-        PlaytimeStreaksTable.upsert {
+        PlaytimeStreaksTable.upsert(PlaytimeStreaksTable.playerUuid) {
             it[this.playerUuid] = playerUuid
             it[currentLoginStreak] = streak
             it[highestLoginStreak] = newHighest
@@ -118,7 +118,7 @@ object PlaytimeStreakRepository {
             val streak = countStreak(loginDates, pauses, lastLogin)
             val newHighest = maxOf(highestByPlayer[uuid] ?: 0, streak)
 
-            PlaytimeStreaksTable.upsert {
+            PlaytimeStreaksTable.upsert(PlaytimeStreaksTable.playerUuid) {
                 it[this.playerUuid] = uuid
                 it[currentLoginStreak] = streak
                 it[highestLoginStreak] = newHighest
