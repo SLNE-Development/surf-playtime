@@ -30,7 +30,7 @@ class PaperMain : SuspendingJavaPlugin() {
         PlayerJoinListener.register()
         PlayerQuitListener.register()
         PlayerAfkListener.register()
-        PlayerAfkListener.afkCheckTask()
+        PlayerAfkListener.startAfkCheckTask()
         playtimeTasks.startAll()
 
         playtimeCommand()
