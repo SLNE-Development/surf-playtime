@@ -19,7 +19,7 @@ surfPaperPluginApi {
 }
 
 dependencies {
-    api(projects.surfPlaytimeCore.surfPlaytimeCorePaper)
+    api(projects.surfPlaytimeCore.surfPlaytimeCoreClient)
     api(projects.surfPlaytimeApi.surfPlaytimeApiPaper)
     compileOnly("dev.slne.surf.transaction:surf-transaction-api:+")
 }

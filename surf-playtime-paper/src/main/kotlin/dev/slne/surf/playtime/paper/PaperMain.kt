@@ -3,12 +3,12 @@ package dev.slne.surf.playtime.paper
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.api.paper.event.register
 import dev.slne.surf.api.paper.extensions.pluginManager
+import dev.slne.surf.playtime.core.client.ClientPlaytimeInstance
+import dev.slne.surf.playtime.core.client.config.playtimeConfig
 import dev.slne.surf.playtime.core.common.service.PayCheckService
 import dev.slne.surf.playtime.core.common.service.PlaytimeService
-import dev.slne.surf.playtime.core.paper.PaperPlaytimeInstance
 import dev.slne.surf.playtime.paper.command.playtimeAdminCommand
 import dev.slne.surf.playtime.paper.command.playtimeCommand
-import dev.slne.surf.playtime.paper.config.PlaytimeConfigManager
 import dev.slne.surf.playtime.paper.listener.PlayerAfkListener
 import dev.slne.surf.playtime.paper.listener.PlayerJoinListener
 import dev.slne.surf.playtime.paper.listener.PlayerQuitListener
@@ -19,11 +19,11 @@ val plugin get() = JavaPlugin.getPlugin(PaperMain::class.java)
 
 class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onLoadAsync() {
-        PaperPlaytimeInstance.paperLoader.onLoad()
+        ClientPlaytimeInstance.clientLoader.onLoad()
     }
 
     override suspend fun onEnableAsync() {
-        PaperPlaytimeInstance.paperLoader.onEnable()
+        ClientPlaytimeInstance.clientLoader.onEnable()
 
         PayCheckService.create(playtimeConfig)
 
@@ -41,11 +41,8 @@ class PaperMain : SuspendingJavaPlugin() {
         playtimeTasks.stopAll()
         PlaytimeService.flushAll()
 
-        PaperPlaytimeInstance.paperLoader.onDisable()
+        ClientPlaytimeInstance.clientLoader.onDisable()
     }
 }
 
 val hasTransactionHook get() = pluginManager.isPluginEnabled("surf-transaction-paper")
-
-val playtimeConfigManager = PlaytimeConfigManager()
-val playtimeConfig get() = playtimeConfigManager.config

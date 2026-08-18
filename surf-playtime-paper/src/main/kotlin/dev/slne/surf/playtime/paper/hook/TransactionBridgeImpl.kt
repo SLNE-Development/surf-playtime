@@ -1,6 +1,7 @@
 package dev.slne.surf.playtime.paper.hook
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.playtime.core.client.paycheck.PayCheckPayout
 import dev.slne.surf.playtime.core.common.bridge.TransactionBridge
 import dev.slne.surf.playtime.paper.hasTransactionHook
 import dev.slne.surf.playtime.paper.plugin
@@ -13,7 +14,7 @@ class TransactionBridgeImpl : TransactionBridge, Services.Fallback {
     override suspend fun givePaycheck(playerUuid: UUID) {
         if (hasTransactionHook) {
             val player = Bukkit.getPlayer(playerUuid) ?: return
-            TransactionHook.givePaycheck(player)
+            PayCheckPayout.give(playerUuid, player)
         } else {
             plugin.logger.severe("Attempted to give paycheck to player $playerUuid, but no transaction hook is available.")
         }

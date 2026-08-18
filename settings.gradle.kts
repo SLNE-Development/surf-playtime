@@ -12,7 +12,9 @@ plugins {
 
 include("surf-playtime-api:surf-playtime-api-common")
 include("surf-playtime-api:surf-playtime-api-paper")
+include("surf-playtime-api:surf-playtime-api-minestom")
 include("surf-playtime-core:surf-playtime-core-common")
-include("surf-playtime-core:surf-playtime-core-paper")
+include("surf-playtime-core:surf-playtime-core-client")
 include("surf-playtime-microservice")
 include("surf-playtime-paper")
+include("surf-playtime-minestom")
