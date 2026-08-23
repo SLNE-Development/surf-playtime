@@ -4,25 +4,52 @@ import dev.slne.surf.api.core.util.mutableObjectSetOf
 import dev.slne.surf.api.core.util.requiredService
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import java.time.LocalDateTime
 import java.util.*
 
 private val service = requiredService<PlaytimeService>()
 
+private const val MAX_CONCURRENT_FLUSHES = 32
+
 interface PlaytimeService {
+    /**
+     * Snapshot of every session currently tracked on this server.
+     */
     val activePlaytimeSessions: Set<PlaytimeSession>
+
+    /**
+     * Live view of every session currently tracked on this server.
+     *
+     * Iterating this does not copy, but it is only weakly consistent with concurrent changes.
+     * Use [activePlaytimeSessions] when a stable snapshot is required.
+     */
+    val activeSessionsView: Collection<PlaytimeSession>
+
+    /**
+     * The sessions [playerUuid] currently has on this server.
+     */
+    fun activeSessionsOf(playerUuid: UUID): List<PlaytimeSession>
 
     suspend fun saveSession(session: PlaytimeSession)
     suspend fun loadSessions(playerUuid: UUID): ObjectSet<PlaytimeSession>
     suspend fun getAndLoadSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> {
-        val activeSession = activePlaytimeSessions.find { it.playerUuid == playerUuid }
+        val activeSession = activeSessionsOf(playerUuid).firstOrNull()
         val loadedSessions = loadSessions(playerUuid)
 
-        val result = mutableObjectSetOf<PlaytimeSession>()
+        val result = mutableObjectSetOf<PlaytimeSession>(loadedSessions.size + 1)
 
         if (activeSession != null) {
             result.add(activeSession)
-            result.addAll(loadedSessions.filterNot { it.sessionId == activeSession.sessionId })
+
+            for (session in loadedSessions) {
+                if (session.sessionId != activeSession.sessionId) {
+                    result.add(session)
+                }
+            }
         } else {
             result.addAll(loadedSessions)
         }
@@ -43,22 +70,33 @@ interface PlaytimeService {
         category: String
     ): ObjectSet<PlaytimeSession>
 
-    suspend fun flushAll() {
-        activePlaytimeSessions.toSet().forEach {
-            saveSession(it.apply {
-                endTime = LocalDateTime.now()
-            })
+    suspend fun flushAll(): Unit = coroutineScope {
+        val sessions = activePlaytimeSessions
+
+        if (sessions.isEmpty()) {
+            return@coroutineScope
+        }
+
+        val semaphore = Semaphore(MAX_CONCURRENT_FLUSHES)
+
+        for (session in sessions) {
+            launch {
+                semaphore.withPermit {
+                    saveSession(session.apply { endTime = LocalDateTime.now() })
+                }
+            }
         }
     }
 
     suspend fun updateAllActiveSessions() {
         val now = LocalDateTime.now()
 
-        activePlaytimeSessions.forEach {
-            it.endTime = now
+        for (session in activeSessionsView) {
+            session.endTime = now
 
-            if (!AfkService.isAfk(it.playerUuid)) {
-                PayCheckService.increasePlaytime(it.playerUuid, 1)
+            val playerUuid = session.playerUuid
+            if (!AfkService.isAfk(playerUuid)) {
+                PayCheckService.increasePlaytime(playerUuid, 1)
             }
         }
     }

@@ -12,7 +12,7 @@ data class PlaytimeSession(
     val server: String,
     val category: String,
     val startTime: SerializableLocalDateTime,
-    var endTime: SerializableLocalDateTime
+    @Volatile var endTime: SerializableLocalDateTime
 ) {
     val durationSeconds get() = Duration.between(startTime, endTime).seconds
 }

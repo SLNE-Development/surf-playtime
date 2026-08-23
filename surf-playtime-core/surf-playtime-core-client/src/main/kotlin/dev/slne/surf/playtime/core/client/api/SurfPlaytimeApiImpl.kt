@@ -12,7 +12,7 @@ import java.util.*
 @AutoService(SurfPlaytimeApi::class)
 class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
     override fun getCurrentPlaytimeSession(playerUuid: UUID): PlaytimeSession? =
-        PlaytimeService.activePlaytimeSessions.find { it.playerUuid == playerUuid }
+        PlaytimeService.activeSessionsOf(playerUuid).firstOrNull()
 
     override fun isPlayerAfk(playerUuid: UUID): Boolean = AfkService.isAfk(playerUuid)
 

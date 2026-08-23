@@ -59,7 +59,7 @@ fun Audience.sendPlaytimeOverview(
                 spacer("- ")
                 variableKey(group)
                 spacer(": ")
-                variableValue(sessions.sumByCategory(group).formatSeconds())
+                variableValue(groupServer.values.sum().formatSeconds())
 
                 for ((serverName, playtime) in groupServer) {
                     append {

@@ -20,7 +20,9 @@ import java.util.*
 
 @AutoService(PlaytimeStreakService::class)
 class PlaytimeStreakServiceImpl : PlaytimeStreakService, Services.Fallback {
-    private val streakCache = Caffeine.newBuilder().build<UUID, PlaytimeStreak.SimpleStreak>()
+    private val streakCache = Caffeine.newBuilder()
+        .maximumSize(MAX_CACHED_STREAKS)
+        .build<UUID, PlaytimeStreak.SimpleStreak>()
 
     override suspend fun loadPlaytimeStreak(playerUuid: UUID): PlaytimeStreak? =
         ClientPlaytimeInstance.rabbitApi.sendRequest(LoadPlaytimeStreakRequestPacket(playerUuid)).streak
@@ -69,4 +71,8 @@ class PlaytimeStreakServiceImpl : PlaytimeStreakService, Services.Fallback {
 
     override suspend fun deleteStreakPause(pauseId: Long): Boolean =
         ClientPlaytimeInstance.rabbitApi.sendRequest(DeletePlaytimeStreakPauseRequestPacket(pauseId)).value
+
+    companion object {
+        private const val MAX_CACHED_STREAKS = 16_384L
+    }
 }

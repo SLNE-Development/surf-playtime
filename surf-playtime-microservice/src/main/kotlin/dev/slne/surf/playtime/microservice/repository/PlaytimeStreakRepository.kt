@@ -1,5 +1,8 @@
 package dev.slne.surf.playtime.microservice.repository
 
+import dev.slne.surf.api.core.util.mutableObject2IntMapOf
+import dev.slne.surf.api.core.util.mutableObject2ObjectMapOf
+import dev.slne.surf.api.core.util.mutableObjectSetOf
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.select
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
@@ -9,10 +12,11 @@ import dev.slne.surf.playtime.api.common.session.PlaytimeStreak
 import dev.slne.surf.playtime.microservice.table.PlaytimeSessionsTable
 import dev.slne.surf.playtime.microservice.table.PlaytimeStreakPausesTable
 import dev.slne.surf.playtime.microservice.table.PlaytimeStreaksTable
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.flow.toSet
 import java.time.LocalDate
 import java.util.*
 
@@ -31,12 +35,7 @@ object PlaytimeStreakRepository {
 
 
     suspend fun saveStreak(playerUuid: UUID, streak: Int, date: LocalDate) = suspendTransaction {
-        val existing = PlaytimeStreaksTable
-            .selectAll()
-            .where { PlaytimeStreaksTable.playerUuid eq playerUuid }
-            .firstOrNull()
-
-        val currentHighest = existing?.get(PlaytimeStreaksTable.highestLoginStreak) ?: 0
+        val currentHighest = loadHighestStreak(playerUuid)
         val newHighest = maxOf(currentHighest, streak)
 
         PlaytimeStreaksTable.upsert(PlaytimeStreaksTable.playerUuid) {
@@ -71,13 +70,7 @@ object PlaytimeStreakRepository {
         val lastLogin = loginDates.max()
         val streak = countStreak(loginDates, loadPauseRanges(), lastLogin)
 
-        val currentHighest = PlaytimeStreaksTable
-            .selectAll()
-            .where { PlaytimeStreaksTable.playerUuid eq playerUuid }
-            .firstOrNull()
-            ?.get(PlaytimeStreaksTable.highestLoginStreak)
-            ?: 0
-        val newHighest = maxOf(currentHighest, streak)
+        val newHighest = maxOf(loadHighestStreak(playerUuid), streak)
 
         PlaytimeStreaksTable.upsert(PlaytimeStreaksTable.playerUuid) {
             it[this.playerUuid] = playerUuid
@@ -94,12 +87,15 @@ object PlaytimeStreakRepository {
      * stored session. Returns the number of recalculated players.
      */
     suspend fun recalculateAllStreaks() = suspendTransaction {
-        val loginDatesByPlayer = PlaytimeSessionsTable
+        val loginDatesByPlayer = mutableObject2ObjectMapOf<UUID, ObjectOpenHashSet<LocalDate>>()
+
+        PlaytimeSessionsTable
             .select(PlaytimeSessionsTable.playerUuid, PlaytimeSessionsTable.startTime)
-            .map { it[PlaytimeSessionsTable.playerUuid] to it[PlaytimeSessionsTable.startTime].toLocalDate() }
-            .toSet()
-            .groupBy({ it.first }, { it.second })
-            .mapValues { (_, dates) -> dates.toSet() }
+            .collect { row ->
+                loginDatesByPlayer
+                    .getOrPut(row[PlaytimeSessionsTable.playerUuid]) { ObjectOpenHashSet() }
+                    .add(row[PlaytimeSessionsTable.startTime].toLocalDate())
+            }
 
         if (loginDatesByPlayer.isEmpty()) {
             return@suspendTransaction 0
@@ -107,16 +103,21 @@ object PlaytimeStreakRepository {
 
         val pauses = loadPauseRanges()
 
-        val highestByPlayer = PlaytimeStreaksTable
+        val highestByPlayer = mutableObject2IntMapOf<UUID>().apply { defaultReturnValue(0) }
+
+        PlaytimeStreaksTable
             .select(PlaytimeStreaksTable.playerUuid, PlaytimeStreaksTable.highestLoginStreak)
-            .map { it[PlaytimeStreaksTable.playerUuid] to it[PlaytimeStreaksTable.highestLoginStreak] }
-            .toList()
-            .toMap()
+            .collect { row ->
+                highestByPlayer.put(
+                    row[PlaytimeStreaksTable.playerUuid],
+                    row[PlaytimeStreaksTable.highestLoginStreak]
+                )
+            }
 
         for ((uuid, loginDates) in loginDatesByPlayer) {
             val lastLogin = loginDates.max()
             val streak = countStreak(loginDates, pauses, lastLogin)
-            val newHighest = maxOf(highestByPlayer[uuid] ?: 0, streak)
+            val newHighest = maxOf(highestByPlayer.getInt(uuid), streak)
 
             PlaytimeStreaksTable.upsert(PlaytimeStreaksTable.playerUuid) {
                 it[this.playerUuid] = uuid
@@ -129,11 +130,18 @@ object PlaytimeStreakRepository {
         loginDatesByPlayer.size
     }
 
-    private suspend fun loadLoginDates(playerUuid: UUID) = PlaytimeSessionsTable
+    private suspend fun loadHighestStreak(playerUuid: UUID) = PlaytimeStreaksTable
+        .select(PlaytimeStreaksTable.highestLoginStreak)
+        .where { PlaytimeStreaksTable.playerUuid eq playerUuid }
+        .firstOrNull()
+        ?.get(PlaytimeStreaksTable.highestLoginStreak)
+        ?: 0
+
+    private suspend fun loadLoginDates(playerUuid: UUID): Set<LocalDate> = PlaytimeSessionsTable
         .select(PlaytimeSessionsTable.startTime)
         .where { PlaytimeSessionsTable.playerUuid eq playerUuid }
         .map { it[PlaytimeSessionsTable.startTime].toLocalDate() }
-        .toSet()
+        .toCollection(mutableObjectSetOf())
 
     private suspend fun loadPauseRanges() = PlaytimeStreakPausesTable.selectAll()
         .map { it[PlaytimeStreakPausesTable.startDate]..it[PlaytimeStreakPausesTable.endDate] }

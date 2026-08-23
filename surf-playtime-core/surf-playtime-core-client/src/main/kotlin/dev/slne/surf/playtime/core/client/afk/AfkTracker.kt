@@ -1,6 +1,7 @@
 package dev.slne.surf.playtime.core.client.afk
 
 import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.util.emptyObjectSet
 import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.client.platform.PlaytimePlatform
@@ -10,6 +11,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.minutes
 
 /**
@@ -18,10 +20,9 @@ import kotlin.time.Duration.Companion.minutes
 object AfkTracker {
     private val afkTimeNanos = 3.minutes.inWholeNanoseconds
 
-    private data class AfkState(
-        val lastActivityNanos: Long,
-        val isAfk: Boolean,
-    )
+    private class AfkState(@Volatile var lastActivityNanos: Long) {
+        val afk = AtomicBoolean(false)
+    }
 
     private val states = ConcurrentHashMap<UUID, AfkState>()
 
@@ -29,10 +30,7 @@ object AfkTracker {
      * Starts tracking [playerUuid] as active.
      */
     fun track(playerUuid: UUID) {
-        states[playerUuid] = AfkState(
-            lastActivityNanos = System.nanoTime(),
-            isAfk = false,
-        )
+        states[playerUuid] = AfkState(System.nanoTime())
 
         AfkService.changeState(playerUuid, false)
     }
@@ -48,34 +46,27 @@ object AfkTracker {
      * Records activity of [playerUuid] and returns whether they were afk until now.
      */
     fun markActive(playerUuid: UUID): Boolean {
-        val now = System.nanoTime()
-        var becameActive = false
+        val state = states[playerUuid] ?: return false
 
-        states.compute(playerUuid) { _, previous ->
-            becameActive = previous?.isAfk == true
+        state.lastActivityNanos = System.nanoTime()
 
-            AfkState(
-                lastActivityNanos = now,
-                isAfk = false,
-            )
-        }
-
-        return becameActive
+        return state.afk.get() && state.afk.compareAndSet(true, false)
     }
 
     /**
      * Returns the players that have been idle long enough to be considered afk at [now].
      */
+    @Suppress("JavaMapForEach")
     fun idlePlayers(now: Long): Set<UUID> {
-        val result = ObjectOpenHashSet<UUID>()
+        var idle: ObjectOpenHashSet<UUID>? = null
 
-        for ((uuid, state) in states) {
-            if (!state.isAfk && now - state.lastActivityNanos >= afkTimeNanos) {
-                result.add(uuid)
+        states.forEach { uuid, state ->
+            if (!state.afk.get() && now - state.lastActivityNanos >= afkTimeNanos) {
+                (idle ?: ObjectOpenHashSet<UUID>().also { idle = it }).add(uuid)
             }
         }
 
-        return result
+        return idle ?: emptyObjectSet()
     }
 
     /**
@@ -83,19 +74,20 @@ object AfkTracker {
      * returns whether the state actually changed.
      */
     fun markAfkIfStillIdle(playerUuid: UUID, now: Long): Boolean {
-        var becameAfk = false
+        val state = states[playerUuid] ?: return false
 
-        states.computeIfPresent(playerUuid) { _, current ->
-            // Recheck — player may have moved by now
-            if (current.isAfk || now - current.lastActivityNanos < afkTimeNanos) {
-                current
-            } else {
-                becameAfk = true
-                current.copy(isAfk = true)
-            }
+        // Recheck — player may have moved by now
+        if (now - state.lastActivityNanos < afkTimeNanos) return false
+        if (!state.afk.compareAndSet(false, true)) return false
+
+        // Activity may have been recorded between the recheck and the flag flip. Undo the
+        // transition instead of sending a player that just moved into afk.
+        if (now - state.lastActivityNanos < afkTimeNanos) {
+            state.afk.compareAndSet(true, false)
+            return false
         }
 
-        return becameAfk
+        return true
     }
 
     /**
@@ -113,7 +105,8 @@ object AfkTracker {
         onChanged: () -> Unit = {},
     ): Boolean {
         // Check that the state is still the same, as it may have changed since the task was scheduled
-        if (states[playerUuid]?.isAfk != isAfk) return false
+        val state = states[playerUuid] ?: return false
+        if (state.afk.get() != isAfk) return false
 
         AfkService.changeState(playerUuid, isAfk)
         updatePlaytimeSession(playerUuid, isAfk)
@@ -136,8 +129,7 @@ object AfkTracker {
 
     private fun updatePlaytimeSession(playerUuid: UUID, isAfk: Boolean) {
         val now = LocalDateTime.now()
-        val activeSessions = PlaytimeService.activePlaytimeSessions
-            .filter { it.playerUuid == playerUuid }
+        val activeSessions = PlaytimeService.activeSessionsOf(playerUuid)
 
         if (isAfk) {
             activeSessions.forEach { session ->

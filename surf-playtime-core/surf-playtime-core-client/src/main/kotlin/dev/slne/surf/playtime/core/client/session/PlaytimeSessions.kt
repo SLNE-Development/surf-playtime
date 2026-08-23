@@ -18,6 +18,7 @@ import java.util.*
  * Starts tracking the playtime of a player that just joined this server.
  */
 fun startPlaytimeSession(playerUuid: UUID) {
+    PlayerSessionEpochs.begin(playerUuid)
     AfkService.changeState(playerUuid, false)
 
     PlaytimeService.cacheSession(
@@ -36,6 +37,8 @@ fun startPlaytimeSession(playerUuid: UUID) {
  * Loads the paycheck playtime of a joining player and advances their login streak.
  */
 suspend fun handlePlaytimeJoin(playerUuid: UUID, audience: Audience) {
+    val epoch = PlayerSessionEpochs.current(playerUuid)
+
     PayCheckService.cachePlaytime(playerUuid)
 
     val streak = PlaytimeStreakService.loadPlaytimeStreak(playerUuid)
@@ -49,7 +52,7 @@ suspend fun handlePlaytimeJoin(playerUuid: UUID, audience: Audience) {
             longestLoginStreak = calculated
         )
 
-        PlaytimeStreakService.cacheStreak(playerUuid, cached)
+        cacheStreakIfStillOnServer(playerUuid, epoch, cached)
         PlaytimeStreakService.savePlaytimeStreak(playerUuid, calculated, today)
 
         audience.sendText {
@@ -84,7 +87,7 @@ suspend fun handlePlaytimeJoin(playerUuid: UUID, audience: Audience) {
         longestLoginStreak = newLongest
     )
 
-    PlaytimeStreakService.cacheStreak(playerUuid, cached)
+    cacheStreakIfStillOnServer(playerUuid, epoch, cached)
     PlaytimeStreakService.savePlaytimeStreak(playerUuid, newStreak, today)
 }
 
@@ -92,21 +95,33 @@ suspend fun handlePlaytimeJoin(playerUuid: UUID, audience: Audience) {
  * Drops the per-player caches of a player that left this server.
  */
 fun invalidatePlaytimeCaches(playerUuid: UUID) {
-    AfkService.changeState(playerUuid, false)
-    PayCheckService.invalidateCache(playerUuid)
-    PlaytimeStreakService.invalidateCache(playerUuid)
+    PlayerSessionEpochs.end(playerUuid) {
+        AfkService.changeState(playerUuid, false)
+        PayCheckService.invalidateCache(playerUuid)
+        PlaytimeStreakService.invalidateCache(playerUuid)
+    }
 }
 
 /**
  * Closes and persists every active session of a player that left this server.
  */
 suspend fun endPlaytimeSessions(playerUuid: UUID) {
-    val sessions = PlaytimeService.activePlaytimeSessions.filter { it.playerUuid == playerUuid }
+    val sessions = PlaytimeService.activeSessionsOf(playerUuid)
 
     val now = LocalDateTime.now()
     sessions.forEach { session ->
         session.endTime = now
         PlaytimeService.saveSession(session)
         PlaytimeService.removeCachedSession(session.sessionId)
+    }
+}
+
+private fun cacheStreakIfStillOnServer(
+    playerUuid: UUID,
+    epoch: Long?,
+    streak: PlaytimeStreak.SimpleStreak
+) {
+    PlayerSessionEpochs.ifCurrent(playerUuid, epoch) {
+        PlaytimeStreakService.cacheStreak(playerUuid, streak)
     }
 }

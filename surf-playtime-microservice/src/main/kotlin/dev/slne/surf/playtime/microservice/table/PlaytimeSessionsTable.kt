@@ -11,4 +11,9 @@ object PlaytimeSessionsTable : LongIdTable("playtime_sessions") {
     val serverCategory = varchar("server_category", 255)
     val startTime = datetime("start_time")
     val endTime = datetime("end_time")
+
+    init {
+        index("idx_playtime_sessions_player_server", false, playerUuid, serverName)
+        index("idx_playtime_sessions_player_category", false, playerUuid, serverCategory)
+    }
 }
