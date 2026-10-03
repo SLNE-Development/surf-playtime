@@ -1,4 +1,4 @@
-package dev.slne.surf.playtime.microservice.repository
+package dev.slne.surf.playtime.database.repository
 
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.deleteWhere
@@ -6,7 +6,7 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insertAndGetId
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.playtime.api.common.session.PlaytimeStreakPause
-import dev.slne.surf.playtime.microservice.table.PlaytimeStreakPausesTable
+import dev.slne.surf.playtime.database.table.PlaytimeStreakPausesTable
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import java.time.LocalDate

@@ -17,4 +17,8 @@ include("surf-playtime-core:surf-playtime-core-common")
 include("surf-playtime-core:surf-playtime-core-client")
 include("surf-playtime-microservice")
 include("surf-playtime-paper")
+include("surf-playtime-paper-standalone")
 include("surf-playtime-minestom")
+
+include("surf-playtime-database")
+include("surf-playtime-database")
