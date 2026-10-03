@@ -21,4 +21,3 @@ include("surf-playtime-paper-standalone")
 include("surf-playtime-minestom")
 
 include("surf-playtime-database")
-include("surf-playtime-database")
