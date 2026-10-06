@@ -33,11 +33,11 @@ class PayCheckServiceImpl : PayCheckService {
     }
 
     override suspend fun handleUpdate(playerUuid: UUID, newPlaytime: Long) {
-        handlePackcheck(playerUuid, newPlaytime)
+        handlePaycheck(playerUuid, newPlaytime)
         handleEventCoinPayout(playerUuid, newPlaytime)
     }
 
-    private suspend fun handlePackcheck(playerUuid: UUID, newPlaytime: Long) {
+    private suspend fun handlePaycheck(playerUuid: UUID, newPlaytime: Long) {
         val paycheck = config.paycheck
 
         if (!paycheck.enabled) {
