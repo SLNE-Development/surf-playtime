@@ -33,6 +33,11 @@ class PayCheckServiceImpl : PayCheckService {
     }
 
     override suspend fun handleUpdate(playerUuid: UUID, newPlaytime: Long) {
+        handlePackcheck(playerUuid, newPlaytime)
+        handleEventCoinPayout(playerUuid, newPlaytime)
+    }
+
+    private suspend fun handlePackcheck(playerUuid: UUID, newPlaytime: Long) {
         val paycheck = config.paycheck
 
         if (!paycheck.enabled) {
@@ -43,6 +48,20 @@ class PayCheckServiceImpl : PayCheckService {
 
         if (newPlaytime % interval == 0L) {
             transactionBridge.givePaycheck(playerUuid)
+        }
+    }
+
+    private suspend fun handleEventCoinPayout(playerUuid: UUID, newPlaytime: Long) {
+        val eventCoinPayout = config.eventCoinPayoutConfig
+
+        if (!eventCoinPayout.enabled) {
+            return
+        }
+
+        val interval = eventCoinPayout.intervalMinutes.coerceAtLeast(1) * 60L
+
+        if (newPlaytime % interval == 0L) {
+            transactionBridge.giveEventCoinPayout(playerUuid)
         }
     }
 

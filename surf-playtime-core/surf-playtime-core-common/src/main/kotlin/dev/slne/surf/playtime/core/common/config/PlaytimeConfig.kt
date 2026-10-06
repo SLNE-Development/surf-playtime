@@ -4,7 +4,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @ConfigSerializable
 data class PlaytimeConfig(
-    val paycheck: PaycheckConfig = PaycheckConfig()
+    val paycheck: PaycheckConfig = PaycheckConfig(),
+    val eventCoinPayoutConfig: EventCoinPayoutConfig = EventCoinPayoutConfig()
 )
 
 @ConfigSerializable
@@ -13,4 +14,13 @@ data class PaycheckConfig(
     val intervalMinutes: Long = 60,
     val amount: Int = 500,
     val maxBalance: Int = 100000
+)
+
+@ConfigSerializable
+data class EventCoinPayoutConfig(
+    val enabled: Boolean = true,
+    val currencyName: String = "castcoin",
+    val intervalMinutes: Long = 1,
+    val amount: Int = 5,
+    val maxBalance: Int? = null
 )
