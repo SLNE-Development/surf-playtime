@@ -18,9 +18,9 @@ data class PaycheckConfig(
 
 @ConfigSerializable
 data class EventCoinPayoutConfig(
-    val enabled: Boolean = true,
-    val currencyName: String = "castcoin",
-    val intervalMinutes: Long = 1,
-    val amount: Int = 5,
+    val enabled: Boolean = false,
+    val currencyName: String = "halloweencoin",
+    val intervalMinutes: Long = 60,
+    val amount: Int = 100,
     val maxBalance: Int? = null
 )
