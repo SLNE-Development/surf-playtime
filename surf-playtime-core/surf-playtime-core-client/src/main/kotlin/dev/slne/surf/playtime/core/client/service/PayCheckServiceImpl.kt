@@ -52,7 +52,7 @@ class PayCheckServiceImpl : PayCheckService {
     }
 
     private suspend fun handleEventCoinPayout(playerUuid: UUID, newPlaytime: Long) {
-        val eventCoinPayout = config.eventCoinPayoutConfig
+        val eventCoinPayout = config.eventCoinPayout
 
         if (!eventCoinPayout.enabled) {
             return

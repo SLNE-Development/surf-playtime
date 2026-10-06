@@ -5,7 +5,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 @ConfigSerializable
 data class PlaytimeConfig(
     val paycheck: PaycheckConfig = PaycheckConfig(),
-    val eventCoinPayoutConfig: EventCoinPayoutConfig = EventCoinPayoutConfig()
+    val eventCoinPayout: EventCoinPayoutConfig = EventCoinPayoutConfig()
 )
 
 @ConfigSerializable

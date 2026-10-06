@@ -46,23 +46,23 @@ object PayCheckPayout {
 
     suspend fun giveEventCoinPayout(playerUuid: UUID, audience: Audience) {
         val transactionUser = TransactionUser[playerUuid]
-        val currency = Currency.byName(playtimeConfig.eventCoinPayoutConfig.currencyName)
-            ?: error("Event Coin Currency ${playtimeConfig.eventCoinPayoutConfig.currencyName} not found!")
+        val currency = Currency.byName(playtimeConfig.eventCoinPayout.currencyName)
+            ?: error("Event Coin Currency ${playtimeConfig.eventCoinPayout.currencyName} not found!")
         val balance = transactionUser.balance(currency)
-        val maxBalance = playtimeConfig.eventCoinPayoutConfig.maxBalance?.toBigDecimal()
+        val maxBalance = playtimeConfig.eventCoinPayout.maxBalance?.toBigDecimal()
 
         if (maxBalance != null && balance >= maxBalance) {
             audience.sendText {
                 appendErrorPrefix()
                 error("Du kannst keine weiteren Event Paychecks erhalten, weil du bereits mehr als ")
-                variableValue(castCoinFormat.format(playtimeConfig.eventCoinPayoutConfig.maxBalance))
+                variableValue(castCoinFormat.format(playtimeConfig.eventCoinPayout.maxBalance))
                 error(" hast!")
             }
             return
         }
 
         val result = transactionUser.deposit(
-            playtimeConfig.eventCoinPayoutConfig.amount.toBigDecimal(),
+            playtimeConfig.eventCoinPayout.amount.toBigDecimal(),
             currency
         )
 
@@ -77,7 +77,7 @@ object PayCheckPayout {
         audience.sendText {
             appendInfoPrefix()
             info("Du hast einen Event Paycheck von ")
-            variableValue(castCoinFormat.format(playtimeConfig.eventCoinPayoutConfig.amount))
+            variableValue(castCoinFormat.format(playtimeConfig.eventCoinPayout.amount))
             info(" erhalten!")
         }
     }
