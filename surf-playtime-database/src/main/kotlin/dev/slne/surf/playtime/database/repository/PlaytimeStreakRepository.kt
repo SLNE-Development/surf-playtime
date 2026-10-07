@@ -1,4 +1,4 @@
-package dev.slne.surf.playtime.microservice.repository
+package dev.slne.surf.playtime.database.repository
 
 import dev.slne.surf.api.core.util.mutableObject2IntMapOf
 import dev.slne.surf.api.core.util.mutableObject2ObjectMapOf
@@ -9,9 +9,9 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
 import dev.slne.surf.playtime.api.common.session.PlaytimeStreak
-import dev.slne.surf.playtime.microservice.table.PlaytimeSessionsTable
-import dev.slne.surf.playtime.microservice.table.PlaytimeStreakPausesTable
-import dev.slne.surf.playtime.microservice.table.PlaytimeStreaksTable
+import dev.slne.surf.playtime.database.table.PlaytimeSessionsTable
+import dev.slne.surf.playtime.database.table.PlaytimeStreakPausesTable
+import dev.slne.surf.playtime.database.table.PlaytimeStreaksTable
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -82,10 +82,6 @@ object PlaytimeStreakRepository {
         PlaytimeStreak(playerUuid, streak, newHighest, lastLogin)
     }
 
-    /**
-     * Recalculates and persists the streaks of every player that has at least one
-     * stored session. Returns the number of recalculated players.
-     */
     suspend fun recalculateAllStreaks() = suspendTransaction {
         val loginDatesByPlayer = mutableObject2ObjectMapOf<UUID, ObjectOpenHashSet<LocalDate>>()
 
