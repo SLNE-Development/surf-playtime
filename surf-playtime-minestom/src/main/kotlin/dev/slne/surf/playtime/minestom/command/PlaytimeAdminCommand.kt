@@ -1,28 +1,13 @@
 package dev.slne.surf.playtime.minestom.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.anyExecutorSuspend
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.literalArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.longArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.stringArgument
+import dev.slne.minestom.lobby.api.command.commandapi.dsl.*
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.minestom.command.argument.surfOfflinePlayerArgument
-import dev.slne.surf.playtime.core.client.command.parseDate
-import dev.slne.surf.playtime.core.client.command.sendConfigurationReloaded
-import dev.slne.surf.playtime.core.client.command.sendEndDateBeforeStartDate
-import dev.slne.surf.playtime.core.client.command.sendInvalidDate
-import dev.slne.surf.playtime.core.client.command.sendNoSessionsFound
-import dev.slne.surf.playtime.core.client.command.sendNoStreakPauses
-import dev.slne.surf.playtime.core.client.command.sendPlayerNotFound
-import dev.slne.surf.playtime.core.client.command.sendRecalculateAllFinished
-import dev.slne.surf.playtime.core.client.command.sendRecalculateAllStarted
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseCreated
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseDeleted
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseList
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseNotFound
-import dev.slne.surf.playtime.core.client.command.sendStreakRecalculated
+import dev.slne.surf.playtime.core.client.command.*
+import dev.slne.surf.playtime.core.client.config.playtimeConfig
 import dev.slne.surf.playtime.core.client.config.playtimeConfigManager
 import dev.slne.surf.playtime.core.client.permission.PlaytimePermissions
+import dev.slne.surf.playtime.core.common.service.PayCheckService
 import dev.slne.surf.playtime.core.common.service.PlaytimeStreakService
 import kotlinx.coroutines.Deferred
 
@@ -30,6 +15,7 @@ fun playtimeAdminCommand() = commandTree("playtimeadmin") {
     withPermission(PlaytimePermissions.COMMAND_ADMIN)
     literalArgument("reload") {
         anyExecutorSuspend { sender, _ ->
+            PayCheckService.create(playtimeConfig)
             playtimeConfigManager.reload()
 
             sender.sendConfigurationReloaded()

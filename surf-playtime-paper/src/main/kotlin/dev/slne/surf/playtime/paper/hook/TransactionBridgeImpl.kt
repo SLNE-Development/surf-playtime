@@ -19,4 +19,13 @@ class TransactionBridgeImpl : TransactionBridge, Services.Fallback {
             plugin.logger.severe("Attempted to give paycheck to player $playerUuid, but no transaction hook is available.")
         }
     }
+
+    override suspend fun giveEventCoinPayout(playerUuid: UUID) {
+        if (hasTransactionHook) {
+            val player = Bukkit.getPlayer(playerUuid) ?: return
+            PayCheckPayout.giveEventCoinPayout(playerUuid, player)
+        } else {
+            plugin.logger.severe("Attempted to give event coin payout to player $playerUuid, but no transaction hook is available.")
+        }
+    }
 }

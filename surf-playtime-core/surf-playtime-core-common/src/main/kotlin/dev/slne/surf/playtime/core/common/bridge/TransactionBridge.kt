@@ -7,4 +7,5 @@ val transactionBridge = requiredService<TransactionBridge>()
 
 interface TransactionBridge {
     suspend fun givePaycheck(playerUuid: UUID)
+    suspend fun giveEventCoinPayout(playerUuid: UUID)
 }

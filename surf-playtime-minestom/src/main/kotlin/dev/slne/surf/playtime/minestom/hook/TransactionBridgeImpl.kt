@@ -12,4 +12,9 @@ class TransactionBridgeImpl : TransactionBridge {
         val player = PlaytimePlatform.onlinePlayer(playerUuid) ?: return
         PayCheckPayout.give(playerUuid, player)
     }
+
+    override suspend fun giveEventCoinPayout(playerUuid: UUID) {
+        val player = PlaytimePlatform.onlinePlayer(playerUuid) ?: return
+        PayCheckPayout.giveEventCoinPayout(playerUuid, player)
+    }
 }
