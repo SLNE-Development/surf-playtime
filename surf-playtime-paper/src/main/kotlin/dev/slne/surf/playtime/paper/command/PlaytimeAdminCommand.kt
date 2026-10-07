@@ -1,30 +1,14 @@
 package dev.slne.surf.playtime.paper.command
 
 import com.github.shynixn.mccoroutine.folia.launch
-import dev.jorel.commandapi.kotlindsl.anyExecutor
-import dev.jorel.commandapi.kotlindsl.commandTree
-import dev.jorel.commandapi.kotlindsl.getValue
-import dev.jorel.commandapi.kotlindsl.literalArgument
-import dev.jorel.commandapi.kotlindsl.longArgument
-import dev.jorel.commandapi.kotlindsl.stringArgument
+import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
-import dev.slne.surf.playtime.core.client.command.parseDate
-import dev.slne.surf.playtime.core.client.command.sendConfigurationReloaded
-import dev.slne.surf.playtime.core.client.command.sendEndDateBeforeStartDate
-import dev.slne.surf.playtime.core.client.command.sendInvalidDate
-import dev.slne.surf.playtime.core.client.command.sendNoSessionsFound
-import dev.slne.surf.playtime.core.client.command.sendNoStreakPauses
-import dev.slne.surf.playtime.core.client.command.sendPlayerNotFound
-import dev.slne.surf.playtime.core.client.command.sendRecalculateAllFinished
-import dev.slne.surf.playtime.core.client.command.sendRecalculateAllStarted
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseCreated
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseDeleted
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseList
-import dev.slne.surf.playtime.core.client.command.sendStreakPauseNotFound
-import dev.slne.surf.playtime.core.client.command.sendStreakRecalculated
+import dev.slne.surf.playtime.core.client.command.*
+import dev.slne.surf.playtime.core.client.config.playtimeConfig
 import dev.slne.surf.playtime.core.client.config.playtimeConfigManager
 import dev.slne.surf.playtime.core.client.permission.PlaytimePermissions
+import dev.slne.surf.playtime.core.common.service.PayCheckService
 import dev.slne.surf.playtime.core.common.service.PlaytimeStreakService
 import dev.slne.surf.playtime.paper.plugin
 import kotlinx.coroutines.Deferred
@@ -34,6 +18,7 @@ fun playtimeAdminCommand() = commandTree("playtimeadmin") {
     literalArgument("reload") {
         anyExecutor { sender, _ ->
             playtimeConfigManager.reload()
+            PayCheckService.create(playtimeConfig)
 
             sender.sendConfigurationReloaded()
         }
