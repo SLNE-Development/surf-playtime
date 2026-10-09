@@ -23,7 +23,7 @@ object PayCheckPayout {
                 error("Du kannst keine weiteren PayChecks erhalten, weil du bereits mehr als ")
                 variableValue(
                     formatCurrency(
-                        playtimeConfig.paycheck.amount.toBigDecimal(),
+                        playtimeConfig.paycheck.maxBalance.toBigDecimal(),
                         Currency.default()
                     )
                 )
@@ -71,7 +71,7 @@ object PayCheckPayout {
                 error("Du kannst keine weiteren Event Paychecks erhalten, weil du bereits mehr als ")
                 variableValue(
                     formatCurrency(
-                        playtimeConfig.eventCoinPayout.amount.toBigDecimal(),
+                        maxBalance,
                         currency
                     )
                 )
