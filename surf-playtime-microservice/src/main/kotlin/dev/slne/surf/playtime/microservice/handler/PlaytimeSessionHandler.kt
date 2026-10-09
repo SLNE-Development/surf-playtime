@@ -2,7 +2,7 @@ package dev.slne.surf.playtime.microservice.handler
 
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.*
 import dev.slne.surf.playtime.core.common.rabbit.packet.response.ManySessionsResponsePacket
-import dev.slne.surf.playtime.microservice.repository.PlaytimeRepository
+import dev.slne.surf.playtime.database.repository.PlaytimeRepository
 import dev.slne.surf.rabbitmq.api.handler.RabbitHandler
 import dev.slne.surf.rabbitmq.api.packet.standard.response.primitive.PrimitiveResponse
 import kotlinx.coroutines.launch

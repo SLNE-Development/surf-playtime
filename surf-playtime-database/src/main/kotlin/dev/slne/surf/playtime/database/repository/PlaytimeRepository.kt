@@ -1,15 +1,18 @@
-package dev.slne.surf.playtime.microservice.repository
+package dev.slne.surf.playtime.database.repository
 
 import dev.slne.surf.api.core.util.freeze
 import dev.slne.surf.api.core.util.mutableObjectSetOf
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.*
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.and
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.sum
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.select
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
-import dev.slne.surf.playtime.microservice.expression.DurationSecondsExpression
-import dev.slne.surf.playtime.microservice.table.PlaytimeSessionsTable
+import dev.slne.surf.playtime.database.table.PlaytimeSessionsTable
+import dev.slne.surf.playtime.database.table.exp.DurationSecondsExpression
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull

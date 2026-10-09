@@ -7,10 +7,11 @@ plugins {
 
 dependencies {
     api(projects.surfPlaytimeCore.surfPlaytimeCoreCommon)
+    implementation(projects.surfPlaytimeDatabase)
 }
 
 surfStandaloneApi {
-    withSurfDatabaseR2dbc("2.3.2", "dev.slne.surf.playtime.libs.database")
+    withSurfDatabaseR2dbc("2.3.4", "dev.slne.surf.playtime.libs.database")
 }
 
 surfMicroservice {

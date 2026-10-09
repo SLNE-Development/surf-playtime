@@ -5,7 +5,7 @@ import dev.slne.surf.playtime.core.common.rabbit.packet.request.DeletePlaytimeSt
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadPlaytimeStreakPausesRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.response.PlaytimeStreakPauseResponsePacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.response.PlaytimeStreakPausesResponsePacket
-import dev.slne.surf.playtime.microservice.repository.PlaytimeStreakPauseRepository
+import dev.slne.surf.playtime.database.repository.PlaytimeStreakPauseRepository
 import dev.slne.surf.rabbitmq.api.handler.RabbitHandler
 import dev.slne.surf.rabbitmq.api.packet.standard.response.primitive.PrimitiveResponse
 import kotlinx.coroutines.launch

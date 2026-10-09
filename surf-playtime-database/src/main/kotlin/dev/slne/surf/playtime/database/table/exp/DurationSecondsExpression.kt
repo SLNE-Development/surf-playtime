@@ -1,4 +1,4 @@
-package dev.slne.surf.playtime.microservice.expression
+package dev.slne.surf.playtime.database.table.exp
 
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.Expression
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.Function
