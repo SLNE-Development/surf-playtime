@@ -14,10 +14,6 @@ surfMicroservice {
     withRabbitModule(RabbitModule.CLIENT_API)
 }
 
-repositories {
-    mavenLocal()
-}
-
 minestomPluginFile {
     id = "surf-playtime-minestom"
     main = "dev.slne.surf.playtime.minestom.PlaytimeMinestomPlugin"
