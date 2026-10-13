@@ -1,10 +1,9 @@
 package dev.slne.surf.playtime.minestom.listener
 
-import com.google.inject.Inject
-import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
-import dev.slne.minestom.lobby.api.extension.GlobalEventHandler
-import dev.slne.minestom.lobby.api.extension.addListener
+import dev.slne.surf.api.minestom.event.EventRegistrar
+import dev.slne.surf.api.minestom.extension.ConnectionManager
+import dev.slne.surf.api.minestom.extension.GlobalEventHandler
+import dev.slne.surf.api.minestom.extension.addListener
 import dev.slne.surf.playtime.api.minestom.event.AfkStateChangeEvent
 import dev.slne.surf.playtime.core.client.afk.AfkTracker
 import net.minestom.server.entity.Player
@@ -17,7 +16,7 @@ import net.minestom.server.event.player.PlayerSpawnEvent
 /**
  * Turns player activity into afk state changes.
  */
-class PlayerAfkListener @Inject constructor() : EventRegistrar {
+object PlayerAfkListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener<PlayerMoveEvent> { event ->
             val position = event.player.position

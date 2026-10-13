@@ -1,7 +1,7 @@
 package dev.slne.surf.playtime.minestom.playtime
 
-import dev.slne.minestom.lobby.api.coroutine.minestomAsyncScope
 import dev.slne.surf.api.core.util.runAtFixedRate
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.playtime.core.common.service.PlaytimeService
 import dev.slne.surf.playtime.minestom.listener.checkAfkStates
 import kotlinx.coroutines.Job

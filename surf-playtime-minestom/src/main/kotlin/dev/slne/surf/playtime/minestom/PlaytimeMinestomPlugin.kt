@@ -1,24 +1,38 @@
 package dev.slne.surf.playtime.minestom
 
-import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.plugin.MinestomPlugin
-import dev.slne.minestom.lobby.api.plugin.annotation.MinestomPluginMeta
-import dev.slne.surf.playtime.minestom.command.PlaytimeCommandRegistrar
+import dev.slne.surf.api.minestom.plugin.SurfMinestomPlugin
+import dev.slne.surf.playtime.core.client.ClientPlaytimeInstance
+import dev.slne.surf.playtime.core.client.config.playtimeConfig
+import dev.slne.surf.playtime.core.common.service.PayCheckService
+import dev.slne.surf.playtime.core.common.service.PlaytimeService
+import dev.slne.surf.playtime.minestom.command.playtimeAdminCommand
+import dev.slne.surf.playtime.minestom.command.playtimeCommand
 import dev.slne.surf.playtime.minestom.listener.PlayerAfkListener
 import dev.slne.surf.playtime.minestom.listener.PlayerConnectionListener
+import dev.slne.surf.playtime.minestom.playtime.playtimeTasks
 
-@AutoService(MinestomPlugin::class)
-@MinestomPluginMeta(
-    "surf-playtime-minestom",
-    dependsOn = [
-        "surf-api-minestom",
-        "surf-rabbitmq-minestom"
-    ]
-)
-class PlaytimeMinestomPlugin : MinestomPlugin(PlaytimeMinestomEntrypoint::class.java) {
-    override fun configurePlugin() {
-        bindCommandRegistrar<PlaytimeCommandRegistrar>()
-        bindEventRegistrar<PlayerConnectionListener>()
-        bindEventRegistrar<PlayerAfkListener>()
+object PlaytimeMinestomPlugin : SurfMinestomPlugin() {
+    override suspend fun onLoad() {
+        PayCheckService.create(playtimeConfig)
+
+        ClientPlaytimeInstance.clientLoader.onLoad()
+        ClientPlaytimeInstance.clientLoader.onEnable()
+
+        playtimeTasks.startAll()
+    }
+
+    override suspend fun onEnable() {
+        playtimeCommand()
+        playtimeAdminCommand()
+
+        PlayerConnectionListener.register(eventNode)
+        PlayerAfkListener.register(eventNode)
+    }
+
+    override suspend fun onDisable() {
+        playtimeTasks.stopAll()
+        PlaytimeService.flushAll()
+
+        ClientPlaytimeInstance.clientLoader.onDisable()
     }
 }

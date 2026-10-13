@@ -1,6 +1,6 @@
 package dev.slne.surf.playtime.minestom.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.*
+import dev.slne.surf.api.minestom.command.dsl.*
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.minestom.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.playtime.core.client.command.*

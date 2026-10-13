@@ -1,9 +1,8 @@
 package dev.slne.surf.playtime.minestom.listener
 
-import com.google.inject.Inject
-import dev.slne.minestom.lobby.api.coroutine.minestomAsyncScope
-import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.minestom.lobby.api.extension.addListener
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
+import dev.slne.surf.api.minestom.event.EventRegistrar
+import dev.slne.surf.api.minestom.extension.addListener
 import dev.slne.surf.playtime.core.client.session.endPlaytimeSessions
 import dev.slne.surf.playtime.core.client.session.handlePlaytimeJoin
 import dev.slne.surf.playtime.core.client.session.invalidatePlaytimeCaches
@@ -17,7 +16,7 @@ import net.minestom.server.event.player.PlayerSpawnEvent
 /**
  * Opens and closes the playtime session of a player while they are on this server.
  */
-class PlayerConnectionListener @Inject constructor() : EventRegistrar {
+object PlayerConnectionListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener<PlayerSpawnEvent> { event ->
             if (!event.isFirstSpawn) return@addListener
