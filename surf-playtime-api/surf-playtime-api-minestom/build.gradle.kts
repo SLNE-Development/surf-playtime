@@ -8,10 +8,6 @@ dependencies {
     api(projects.surfPlaytimeApi.surfPlaytimeApiCommon)
 }
 
-repositories {
-    mavenLocal()
-}
-
 publishing {
     repositories {
         slneReleases()
