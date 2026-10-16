@@ -1,8 +1,8 @@
 package dev.slne.surf.playtime.minestom.platform
 
 import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.coroutine.minestomAsyncScope
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
+import dev.slne.surf.api.minestom.extension.ConnectionManager
 import dev.slne.surf.playtime.core.client.platform.PlaytimePlatform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

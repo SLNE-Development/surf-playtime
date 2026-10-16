@@ -14,6 +14,16 @@ surfMicroservice {
     withRabbitModule(RabbitModule.CLIENT_API)
 }
 
+minestomPluginFile {
+    id = "surf-playtime-minestom"
+    main = "dev.slne.surf.playtime.minestom.PlaytimeMinestomPlugin"
+    authors = listOf("red")
+
+    pluginDependencies {
+        register("surf-rabbitmq-minestom")
+    }
+}
+
 dependencies {
     api(projects.surfPlaytimeCore.surfPlaytimeCoreClient)
     api(projects.surfPlaytimeApi.surfPlaytimeApiMinestom)

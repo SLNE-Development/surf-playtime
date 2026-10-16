@@ -6,5 +6,5 @@ import dev.slne.surf.playtime.core.common.PlaytimeInstance
 
 @AutoService(PlaytimeInstance::class)
 class MinestomPlaytimeInstance : AbstractClientPlaytimeInstance() {
-    override val dataPath get() = PlaytimeMinestomEntrypoint.dataPath
+    override val dataPath get() = PlaytimeMinestomPlugin.dataDirectory
 }
