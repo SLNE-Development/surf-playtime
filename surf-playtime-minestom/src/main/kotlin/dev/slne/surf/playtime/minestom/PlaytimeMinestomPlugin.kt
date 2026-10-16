@@ -16,12 +16,12 @@ object PlaytimeMinestomPlugin : SurfMinestomPlugin() {
         PayCheckService.create(playtimeConfig)
 
         ClientPlaytimeInstance.clientLoader.onLoad()
-        ClientPlaytimeInstance.clientLoader.onEnable()
 
         playtimeTasks.startAll()
     }
 
     override suspend fun onEnable() {
+        ClientPlaytimeInstance.clientLoader.onEnable()
         playtimeCommand()
         playtimeAdminCommand()
 
