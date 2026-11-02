@@ -2,13 +2,18 @@ package dev.slne.surf.playtime.core.client.service
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.api.core.util.toObjectSet
+import dev.slne.surf.playtime.api.common.session.PlaytimeFilter
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
 import dev.slne.surf.playtime.core.client.ClientPlaytimeInstance
+import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadPlaytimePerPlayerRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadSessionsByPlayerUuidAndServerCategoryRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadSessionsByPlayerUuidAndServerNameRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.LoadSessionsByPlayerUuidRequestPacket
 import dev.slne.surf.playtime.core.common.rabbit.packet.request.SaveSessionRequestPacket
 import dev.slne.surf.playtime.core.common.service.PlaytimeService
+import it.unimi.dsi.fastutil.objects.Object2LongMap
+import it.unimi.dsi.fastutil.objects.Object2LongMaps
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -70,4 +75,12 @@ class PlaytimeServiceImpl : PlaytimeService {
     ): ObjectSet<PlaytimeSession> = ClientPlaytimeInstance.rabbitApi.sendRequest(
         LoadSessionsByPlayerUuidAndServerCategoryRequestPacket(playerUuid, category)
     ).sessions.toObjectSet()
+
+    override suspend fun loadPlaytimePerPlayer(filter: PlaytimeFilter): Object2LongMap<UUID> {
+        val response = ClientPlaytimeInstance.rabbitApi.sendRequest(
+            LoadPlaytimePerPlayerRequestPacket(filter)
+        )
+
+        return Object2LongMaps.unmodifiable(Object2LongOpenHashMap(response.playtime))
+    }
 }
