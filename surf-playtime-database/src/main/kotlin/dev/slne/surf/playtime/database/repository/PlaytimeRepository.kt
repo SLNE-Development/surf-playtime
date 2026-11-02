@@ -98,8 +98,8 @@ object PlaytimeRepository {
     }
 
     /**
-     * Sums the stored playtime per player of all sessions matching [filter], counting only the part of each
-     * session inside the window of [filter].
+     * Sums the stored playtime per player of all sessions matching [filter], counting only the
+     * part of each session inside the window of [filter].
      */
     suspend fun loadPlaytimePerPlayer(filter: PlaytimeFilter): Object2LongMap<UUID> {
         val playtime = Object2LongOpenHashMap<UUID>()

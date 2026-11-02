@@ -5,7 +5,8 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 /**
- * Returns the whole seconds of the session [[start], [end]) that lie within the window [[from], [to]).
+ * Returns the whole seconds of the session from [start] to [end] that lie within the window from
+ * [from] (inclusive) to [to] (exclusive).
  */
 internal fun secondsWithin(
     start: LocalDateTime,

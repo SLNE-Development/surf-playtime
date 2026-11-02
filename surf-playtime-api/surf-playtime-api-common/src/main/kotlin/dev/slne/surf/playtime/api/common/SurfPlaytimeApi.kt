@@ -20,12 +20,11 @@ interface SurfPlaytimeApi {
     suspend fun getAllPlaytimeSessions(playerUuid: UUID): ObjectSet<PlaytimeSession>
 
     /**
-     * Sums the stored playtime per player of all sessions matching [filter].
+     * Sums the stored playtime in seconds per player of all sessions matching [filter].
      *
-     * Only the part of a session inside the window of [filter] is counted. Sessions that are still running are
-     * included as far as they have been saved, which happens periodically and when a player leaves a server.
-     *
-     * @return playtime in seconds by player uuid, without players that have no matching playtime
+     * Only the part of a session inside the window of [filter] is counted. Sessions that are
+     * still running are included as far as they have been saved, which happens periodically
+     * and when a player leaves a server. Players without matching playtime are not contained.
      */
     suspend fun getPlaytimePerPlayer(filter: PlaytimeFilter): Object2LongMap<UUID>
 }
