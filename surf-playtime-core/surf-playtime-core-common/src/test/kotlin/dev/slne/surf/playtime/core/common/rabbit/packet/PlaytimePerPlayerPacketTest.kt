@@ -6,6 +6,7 @@ import dev.slne.surf.playtime.core.common.rabbit.packet.response.PlaytimePerPlay
 import dev.slne.surf.rabbitmq.api.InternalRabbitMQ
 import dev.slne.surf.rabbitmq.api.RabbitMQApi
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.modules.EmptySerializersModule
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*
 
-@OptIn(InternalRabbitMQ::class)
+@OptIn(InternalRabbitMQ::class, ExperimentalSerializationApi::class)
 class PlaytimePerPlayerPacketTest {
     private val cbor = RabbitMQApi.createCbor(EmptySerializersModule())
 

@@ -1,8 +1,9 @@
 package dev.slne.surf.playtime.api.common.session
 
-import dev.slne.surf.api.core.serializer.java.datetime.datetime.ldt.SerializableLocalDateTime
-import dev.slne.surf.api.core.serializer.java.uuid.SerializableUUID
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
+import java.util.*
 
 /**
  * Selects stored playtime sessions by time window, server, category and player.
@@ -16,11 +17,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class PlaytimeFilter(
-    val from: SerializableLocalDateTime,
-    val to: SerializableLocalDateTime,
+    val from: @Contextual LocalDateTime,
+    val to: @Contextual LocalDateTime,
     val servers: Set<String>? = null,
     val categories: Set<String>? = null,
-    val players: Set<SerializableUUID>? = null,
+    val players: Set<@Contextual UUID>? = null,
 ) {
     init {
         require(from.isBefore(to)) { "from ($from) must be before to ($to)" }

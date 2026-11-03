@@ -1,10 +1,11 @@
 package dev.slne.surf.playtime.core.common.rabbit.packet.response
 
-import dev.slne.surf.api.core.serializer.java.uuid.SerializableUUID
 import dev.slne.surf.rabbitmq.api.packet.RabbitResponsePacket
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.util.*
 
 @Serializable
 data class PlaytimePerPlayerResponsePacket(
-    val playtime: Map<SerializableUUID, Long>
+    val playtime: Map<@Contextual UUID, Long>
 ) : RabbitResponsePacket()
