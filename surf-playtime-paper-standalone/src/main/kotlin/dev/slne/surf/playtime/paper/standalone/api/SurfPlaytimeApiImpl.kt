@@ -2,9 +2,12 @@ package dev.slne.surf.playtime.paper.standalone.api
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.playtime.api.common.SurfPlaytimeApi
+import dev.slne.surf.playtime.api.common.session.PlaytimeFilter
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
+import dev.slne.surf.playtime.database.repository.PlaytimeRepository
 import dev.slne.surf.playtime.paper.standalone.afk.AfkTracker
 import dev.slne.surf.playtime.paper.standalone.service.PlaytimeSessionService
+import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
 import java.util.*
@@ -29,4 +32,7 @@ class SurfPlaytimeApiImpl : SurfPlaytimeApi, Services.Fallback {
 
     override suspend fun getAllPlaytimeSessions(playerUuid: UUID): ObjectSet<PlaytimeSession> =
         PlaytimeSessionService.getAndLoadSessions(playerUuid)
+
+    override suspend fun getPlaytimePerPlayer(filter: PlaytimeFilter): Object2LongMap<UUID> =
+        PlaytimeRepository.loadPlaytimePerPlayer(filter)
 }

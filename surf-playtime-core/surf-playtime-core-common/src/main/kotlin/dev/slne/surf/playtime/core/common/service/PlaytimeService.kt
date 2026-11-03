@@ -2,7 +2,9 @@ package dev.slne.surf.playtime.core.common.service
 
 import dev.slne.surf.api.core.util.mutableObjectSetOf
 import dev.slne.surf.api.core.util.requiredService
+import dev.slne.surf.playtime.api.common.session.PlaytimeFilter
 import dev.slne.surf.playtime.api.common.session.PlaytimeSession
+import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -69,6 +71,8 @@ interface PlaytimeService {
         playerUuid: UUID,
         category: String
     ): ObjectSet<PlaytimeSession>
+
+    suspend fun loadPlaytimePerPlayer(filter: PlaytimeFilter): Object2LongMap<UUID>
 
     suspend fun flushAll(): Unit = coroutineScope {
         val sessions = activePlaytimeSessions
