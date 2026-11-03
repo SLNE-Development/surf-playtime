@@ -10,6 +10,8 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.greater
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.inList
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.less
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.sum
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.javatime.CustomDateTimeFunction
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.javatime.dateTimeParam
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.select
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
@@ -99,38 +101,44 @@ object PlaytimeRepository {
 
     /**
      * Sums the stored playtime per player of all sessions matching [filter], counting only the
-     * part of each session inside the window of [filter].
+     * whole seconds of each session inside the window of [filter]. The database clips and sums
+     * the sessions, so only one row per player is transferred.
      */
     suspend fun loadPlaytimePerPlayer(filter: PlaytimeFilter): Object2LongMap<UUID> {
-        val playtime = Object2LongOpenHashMap<UUID>()
-
         if (filter.matchesNothing()) {
-            return Object2LongMaps.unmodifiable(playtime)
+            return Object2LongMaps.emptyMap()
         }
 
-        suspendTransaction {
+        val totalSeconds = DurationSecondsExpression(
+            start = CustomDateTimeFunction(
+                "GREATEST",
+                PlaytimeSessionsTable.startTime,
+                dateTimeParam(filter.from)
+            ),
+            end = CustomDateTimeFunction(
+                "LEAST",
+                PlaytimeSessionsTable.endTime,
+                dateTimeParam(filter.to)
+            )
+        ).sum()
+
+        return suspendTransaction {
+            val playtime = Object2LongOpenHashMap<UUID>()
+
             PlaytimeSessionsTable
-                .select(
-                    PlaytimeSessionsTable.playerUuid,
-                    PlaytimeSessionsTable.startTime,
-                    PlaytimeSessionsTable.endTime
-                )
+                .select(PlaytimeSessionsTable.playerUuid, totalSeconds)
                 .where(filter.toCondition())
+                .groupBy(PlaytimeSessionsTable.playerUuid)
                 .collect { row ->
-                    val seconds = secondsWithin(
-                        row[PlaytimeSessionsTable.startTime],
-                        row[PlaytimeSessionsTable.endTime],
-                        filter.from,
-                        filter.to
-                    )
+                    val seconds = row[totalSeconds] ?: 0
 
                     if (seconds > 0) {
-                        playtime.addTo(row[PlaytimeSessionsTable.playerUuid], seconds)
+                        playtime.put(row[PlaytimeSessionsTable.playerUuid], seconds)
                     }
                 }
-        }
 
-        return Object2LongMaps.unmodifiable(playtime)
+            Object2LongMaps.unmodifiable(playtime)
+        }
     }
 
     private fun PlaytimeFilter.toCondition(): Op<Boolean> {
